@@ -6,4 +6,10 @@ service /users on new http:Listener(8080) {
         return getUsers(id);
     }
 
+    isolated resource function post addUser(@http:Payload Users user) returns int|error? {
+        return addUser(user);
+    }
+
+    
+
 }    
