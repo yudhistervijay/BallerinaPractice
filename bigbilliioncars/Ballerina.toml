@@ -1,0 +1,14 @@
+[package]
+org = "admin"
+name = "bigbilliioncars"
+version = "0.1.0"
+distribution = "2201.8.5"
+
+[build-options]
+observabilityIncluded = true
+
+# [[platform.java11.dependency]]
+# groupId = "org.postgresql"
+# artifactId = "postgresql"
+# version = "42.3.4"
+
