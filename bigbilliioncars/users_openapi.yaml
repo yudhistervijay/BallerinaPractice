@@ -26,33 +26,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Users'
-        "202":
-          description: Accepted
-        "400":
-          description: BadRequest
-        "500":
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorPayload'
-  /addUser:
-    post:
-      operationId: postAdduser
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Users'
-      responses:
-        "201":
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: integer
-                format: int64
+                $ref: '#/components/schemas/college'
         "202":
           description: Accepted
         "400":
@@ -65,6 +39,19 @@ paths:
                 $ref: '#/components/schemas/ErrorPayload'
 components:
   schemas:
+    college:
+      required:
+      - address
+      - name
+      type: object
+      properties:
+        college_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        address:
+          type: string
     ErrorPayload:
       type: object
       properties:
@@ -87,24 +74,3 @@ components:
           type: integer
           description: Relevant HTTP status code
           format: int32
-    Users:
-      required:
-      - email
-      - first_name
-      - last_name
-      - phone
-      type: object
-      properties:
-        user_id:
-          type: integer
-          format: int64
-        first_name:
-          type: string
-        last_name:
-          type: string
-        email:
-          type: string
-        phone:
-          type: string
-        is_active:
-          type: boolean
