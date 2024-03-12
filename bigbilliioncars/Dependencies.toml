@@ -9,7 +9,7 @@ distribution-version = "2201.8.5"
 
 [[package]]
 org = "admin"
-name = "bigbilliioncars"
+name = "big_billion_cars"
 version = "0.1.0"
 dependencies = [
 	{org = "ballerina", name = "http"},
@@ -19,7 +19,7 @@ dependencies = [
 	{org = "ballerinax", name = "postgresql.driver"}
 ]
 modules = [
-	{org = "admin", packageName = "bigbilliioncars", moduleName = "bigbilliioncars"}
+	{org = "admin", packageName = "big_billion_cars", moduleName = "big_billion_cars"}
 ]
 
 [[package]]
