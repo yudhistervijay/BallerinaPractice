@@ -1,6 +1,8 @@
 import ballerinax/postgresql.driver as _;
 import ballerina/io;
 import ballerina/sql;
+import big_billion_cars.dbconnection;
+
 
 public type Appraisal record {|
     int appr_id?; 
@@ -16,9 +18,11 @@ public type Appraisal record {|
     string img1;
 |};
 
-isolated function addAppraisal(Appraisal appraisal) returns int|error {
+
+
+public isolated function addAppraisal(Appraisal appraisal) returns int|error {
     appraisal.is_active = true;
-    sql:ExecutionResult result = check dbClient->execute(`
+    sql:ExecutionResult result = check dbconnection:dbClient->execute(`
         INSERT INTO big_billion_cars."Appraisal" (vin,"vehYear","vehMake", "vehModel","vehSeries","interiorColor","exteriorColor",user_id, is_active,"img1")
         VALUES (${appraisal.vin}, ${appraisal.vehYear},${appraisal.vehMake},${appraisal.vehModel},  
                 ${appraisal.vehSeries}, ${appraisal.interiorColor},${appraisal.exteriorColor},${appraisal.user_id}, ${appraisal.is_active},${appraisal.img1})`);
@@ -31,9 +35,9 @@ isolated function addAppraisal(Appraisal appraisal) returns int|error {
 }
 
 
-isolated function editAppraisal(int appr_id, Appraisal appraisal) returns string|error {
+public isolated function editAppraisal(int appr_id, Appraisal appraisal) returns string|error {
     appraisal.is_active = true;
-    sql:ExecutionResult _ = check dbClient->execute(`
+    sql:ExecutionResult _ = check dbconnection:dbClient->execute(`
         UPDATE big_billion_cars."Appraisal"
 	SET vin=${appraisal.vin}, "vehYear"=${appraisal.vehYear}, "vehModel"=${appraisal.vehModel}, "vehSeries"=${appraisal.vehSeries}, "vehMake"=${appraisal.vehMake}, "interiorColor"=${appraisal.interiorColor}, "exteriorColor"=${appraisal.exteriorColor}, img1=${appraisal.img1}
 	WHERE appr_id=${appr_id}`);
@@ -42,16 +46,16 @@ isolated function editAppraisal(int appr_id, Appraisal appraisal) returns string
 }
 
 
-isolated function deleteAppraisal(int id) returns string|error? {
-     sql:ExecutionResult _ = check dbClient->execute(
+public isolated function deleteAppraisal(int id) returns string|error? {
+     sql:ExecutionResult _ = check dbconnection:dbClient->execute(
         `UPDATE big_billion_cars."Appraisal" SET is_active = false WHERE appr_id= ${id}`
     );
     return "appraisal car deleted successfully";
 }
 
 
-isolated function showAppraisal(int appr_id) returns Appraisal|error {
-    Appraisal appr = check dbClient->queryRow(
+public isolated function showAppraisal(int appr_id) returns Appraisal|error {
+    Appraisal appr = check dbconnection:dbClient->queryRow(
         `SELECT * FROM big_billion_cars."Appraisal" WHERE appr_id = ${appr_id}`
     );
     return appr;
@@ -59,12 +63,13 @@ isolated function showAppraisal(int appr_id) returns Appraisal|error {
 
 
 
-isolated function downloadFile(string imageName) returns byte[]|error? {
+public isolated function downloadFile(string imageName) returns byte[]|error? {
 
     string imagePath = "D:/ballerina practice/ballerina images/"+imageName;
     byte[] bytes = check io:fileReadBytes(imagePath);
     return bytes;
 }
+
 
 
 

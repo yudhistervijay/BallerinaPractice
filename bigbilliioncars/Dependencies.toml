@@ -5,7 +5,7 @@
 
 [ballerina]
 dependencies-toml-version = "2"
-distribution-version = "2201.8.5"
+distribution-version = "2201.8.6"
 
 [[package]]
 org = "admin"
@@ -14,14 +14,18 @@ version = "0.1.0"
 dependencies = [
 	{org = "ballerina", name = "http"},
 	{org = "ballerina", name = "io"},
-	{org = "ballerina", name = "mime"},
 	{org = "ballerina", name = "sql"},
+	{org = "ballerina", name = "test"},
 	{org = "ballerinai", name = "observe"},
 	{org = "ballerinax", name = "postgresql"},
 	{org = "ballerinax", name = "postgresql.driver"}
 ]
 modules = [
-	{org = "admin", packageName = "big_billion_cars", moduleName = "big_billion_cars"}
+	{org = "admin", packageName = "big_billion_cars", moduleName = "big_billion_cars"},
+	{org = "admin", packageName = "big_billion_cars", moduleName = "big_billion_cars.dbconnection"},
+	{org = "admin", packageName = "big_billion_cars", moduleName = "big_billion_cars.inventory"},
+	{org = "admin", packageName = "big_billion_cars", moduleName = "big_billion_cars.model"},
+	{org = "admin", packageName = "big_billion_cars", moduleName = "big_billion_cars.user"}
 ]
 
 [[package]]
@@ -78,7 +82,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "http"
-version = "2.10.10"
+version = "2.10.11"
 dependencies = [
 	{org = "ballerina", name = "auth"},
 	{org = "ballerina", name = "cache"},
@@ -166,6 +170,15 @@ dependencies = [
 
 [[package]]
 org = "ballerina"
+name = "lang.error"
+version = "0.0.0"
+scope = "testOnly"
+dependencies = [
+	{org = "ballerina", name = "jballerina.java"}
+]
+
+[[package]]
+org = "ballerina"
 name = "lang.int"
 version = "0.0.0"
 dependencies = [
@@ -232,9 +245,6 @@ dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
 	{org = "ballerina", name = "lang.int"}
 ]
-modules = [
-	{org = "ballerina", packageName = "mime", moduleName = "mime"}
-]
 
 [[package]]
 org = "ballerina"
@@ -287,6 +297,19 @@ version = "2.5.0"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
 	{org = "ballerina", name = "time"}
+]
+
+[[package]]
+org = "ballerina"
+name = "test"
+version = "0.0.0"
+scope = "testOnly"
+dependencies = [
+	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "lang.error"}
+]
+modules = [
+	{org = "ballerina", packageName = "test", moduleName = "test"}
 ]
 
 [[package]]

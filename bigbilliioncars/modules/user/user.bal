@@ -1,6 +1,6 @@
 import ballerinax/postgresql.driver as _;
-import ballerinax/postgresql;
 import ballerina/sql;
+import big_billion_cars.dbconnection;
 // import ballerina/email;
 
 public type Users record {|
@@ -14,26 +14,22 @@ public type Users record {|
     boolean is_active?;
 |};
 
-configurable string USER = ?;
-configurable string PASSWORD = ?;
-configurable string HOST = ?;
-configurable int PORT = ?;
-configurable string DATABASE = ?;
+// configurable string USER = ?;
+// configurable string PASSWORD = ?;
+// configurable string HOST = ?;
+// configurable int PORT = ?;
+// configurable string DATABASE = ?;
 
-final postgresql:Client dbClient = 
-                               check new (host=HOST, username = USER, password=PASSWORD, port=PORT, database="postgres");
-
-
-isolated function getUsers(int id) returns Users|error {
-    Users users = check dbClient->queryRow(
+public  isolated function getUsers(int id) returns Users|error {
+    Users users = check dbconnection:dbClient->queryRow(
         `SELECT * FROM big_billion_cars.users WHERE user_id = ${id}`
     );
     return users;
 }
 
-isolated function addUser(Users user) returns int|error {
+public isolated function addUser(Users user) returns int|error {
     user.is_active = true;
-    sql:ExecutionResult result = check dbClient->execute(`
+    sql:ExecutionResult result = check dbconnection:dbClient->execute(`
         INSERT INTO big_billion_cars.users (first_name, last_name,username,password, email, phone, is_active)
         VALUES (${user.first_name}, ${user.last_name},${user.username},${user.password},  
                 ${user.email}, ${user.phone} , ${user.is_active})`);
@@ -45,8 +41,8 @@ isolated function addUser(Users user) returns int|error {
     }
 }
 
-isolated function findUser(string username, string password) returns string|Users|error{            
-         Users result = check dbClient->queryRow(
+public isolated function findUser(string username, string password) returns string|Users|error{            
+         Users result = check dbconnection:dbClient->queryRow(
             `SELECT * FROM big_billion_cars.users WHERE username = ${username} AND password = ${password}`
         ); 
         return result;              
