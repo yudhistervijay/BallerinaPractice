@@ -1,5 +1,6 @@
 import ballerina/http;
 import big_billion_cars.user;
+// import big_billion_cars.mailcon;
 
 //service /users on new http:Listener(8082) 
 
@@ -8,12 +9,17 @@ allowCredentials: false,
 allowHeaders: ["Content-Type"],
 exposeHeaders: ["*"], 
 maxAge: 84900}}
+
+
+
+
 service /user on httpl{
+
      isolated resource function get fetchUser(int id) returns user:Users|error? {
         return user:getUsers(id);
     }
 
-    isolated resource function post addUser(user:Users user)returns int|error? {
+     resource function post addUser(user:Users user)returns int|error? {
         return user:addUser(user);
     }
 
@@ -22,3 +28,5 @@ service /user on httpl{
     }
     
 }
+
+

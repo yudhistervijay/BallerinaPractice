@@ -37,7 +37,7 @@ service /appraisal on httpl {
 
 
 
-    resource function post receiver(http:Request request) returns string|error {
+    resource function post uploadImage(http:Request request) returns string|error {
         stream<byte[], io:Error?> streamer = check request.getByteStream();
 
         // Writes the incoming stream to a file using the `io:fileWriteBlocksFromStream` API
