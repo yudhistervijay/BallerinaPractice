@@ -1,7 +1,7 @@
 import ballerinax/postgresql.driver as _;
 import ballerina/sql;
 import big_billion_cars.dbconnection;
-// import ballerina/email;
+import big_billion_cars.mailcon;
 
 public type Users record {|
     int user_id?;
@@ -27,7 +27,7 @@ public  isolated function getUsers(int id) returns Users|error {
     return users;
 }
 
-public isolated function addUser(Users user) returns int|error {
+public  function addUser(Users user) returns int|error {
     user.is_active = true;
     sql:ExecutionResult result = check dbconnection:dbClient->execute(`
         INSERT INTO big_billion_cars.users (first_name, last_name,username,password, email, phone, is_active)
@@ -35,11 +35,12 @@ public isolated function addUser(Users user) returns int|error {
                 ${user.email}, ${user.phone} , ${user.is_active})`);
     int|string? lastInsertId = result.lastInsertId;
     if lastInsertId is int {
+        error? mailService = mailcon:mailService();
         return lastInsertId;
     } else {
         return error("Unable to obtain last insert ID");
     }
-}
+} 
 
 public isolated function findUser(string username, string password) returns string|Users|error{            
          Users result = check dbconnection:dbClient->queryRow(
@@ -49,26 +50,6 @@ public isolated function findUser(string username, string password) returns stri
 }
 
 
-// public function main() returns error? {
-//     // Creates an SMTP client with the connection parameters, host, username, and password. 
-//     // The default port number `465` is used over SSL with these configurations. `SmtpConfig` can 
-//     // be configured and passed to this client if the port or security is to be customized.
-//     email:SmtpClient smtpClient = check new ("smtp.email.com", "yudhistervijay@gmail.com" , "Massil@123");
 
-//     // Defines the email that is required to be sent.
-//     email:Message email = {
-//         to: "rupeshkhade7387.com",
-//         // Subject of the email is added as follows. This field is mandatory.
-//         subject: "Sample Email",
-//         // Body content (text) of the email is added as follows. This field is optional.
-//         body: "This is a sample email."
-//     };
-
-//     // Sends the email message with the client. The `send` method can be used instead if the 
-//     // email is required to be sent with mandatory and optional parameters instead of 
-//     // configuring an `email:Message` record.
-//     check smtpClient->sendMessage(email);
-    
-// }
 
 
