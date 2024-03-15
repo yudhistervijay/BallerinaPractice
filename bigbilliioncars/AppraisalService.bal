@@ -3,21 +3,19 @@ import ballerina/http;
 import ballerina/io;
 import big_billion_cars.model ;
 
+listener http:Listener httpl = new(8080);
 
 
 
+//udp:Service obj = service object 
 @http:ServiceConfig {cors: {allowOrigins: ["http://localhost:4200"], 
 allowCredentials: false, 
 allowHeaders: ["Content-Type"],
 exposeHeaders: ["*"], 
 maxAge: 84900}}
 
-service /appraisal on new http:Listener(8080) {
-
-    
-   
-    
-    isolated resource function post addAppraisal(model:Appraisal appraisal)returns int|error? {
+service /appraisal on httpl {
+ isolated resource function post addAppraisal(model:Appraisal appraisal)returns int|error? {
         return model:addAppraisal(appraisal);
     }
 
@@ -38,7 +36,6 @@ service /appraisal on new http:Listener(8080) {
     }
 
 
-    
 
     resource function post receiver(http:Request request) returns string|error {
         stream<byte[], io:Error?> streamer = check request.getByteStream();
@@ -54,5 +51,5 @@ service /appraisal on new http:Listener(8080) {
 
 
 
-}    
+}
 

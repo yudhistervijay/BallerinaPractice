@@ -1,13 +1,14 @@
 import ballerina/http;
 import big_billion_cars.user;
 
+//service /users on new http:Listener(8082) 
+
 @http:ServiceConfig {cors: {allowOrigins: ["http://localhost:4200"], 
 allowCredentials: false, 
 allowHeaders: ["Content-Type"],
 exposeHeaders: ["*"], 
 maxAge: 84900}}
-
-service /users on new http:Listener(8080) {
+service /user on httpl{
      isolated resource function get fetchUser(int id) returns user:Users|error? {
         return user:getUsers(id);
     }
