@@ -70,6 +70,13 @@ public isolated function downloadFile(string imageName) returns byte[]|error? {
     return bytes;
 }
 
+public isolated function apprList(int user_id) returns Appraisal|error {
+    Appraisal appr = check dbconnection:dbClient->queryRow(
+        `SELECT * FROM big_billion_cars."Appraisal"  WHERE user_id = ${user_id}`
+    );
+    return appr;
+}
+
 
 
 

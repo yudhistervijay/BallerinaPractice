@@ -47,6 +47,11 @@ service /appraisal on httpl {
         return "File Received!";
     }
 
+
+    isolated resource function get apprList(int user_id) returns model:Appraisal|error? {
+        return model:apprList(user_id);
+    }
+
     
 
 
