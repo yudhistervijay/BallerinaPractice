@@ -1,11 +1,11 @@
-import ballerinax/postgresql.driver as _;
+import big_billion_cars.dbconnection;
+
 import ballerina/io;
 import ballerina/sql;
-import big_billion_cars.dbconnection;
 
 
 public type Appraisal record {|
-    int appr_id?; 
+    int appr_id?;
     string vin;
     int vehYear;
     string vehMake;
@@ -16,9 +16,18 @@ public type Appraisal record {|
     int user_id;
     boolean is_active?;
     string img1;
+    // string img2?;
+    // string img3?;
+    // string img4?;
+    // string invntrySts?;
+    // boolean soldOut?;
+    // int buyerUserId?;
+
 |};
 
+Appraisal[] apprs = [];
 
+// time:Time time1 = time:parse("2017-06-26T09:46:22.444-0500", "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
 public isolated function addAppraisal(Appraisal appraisal) returns int|error {
     appraisal.is_active = true;
@@ -34,7 +43,6 @@ public isolated function addAppraisal(Appraisal appraisal) returns int|error {
     }
 }
 
-
 public isolated function editAppraisal(int appr_id, Appraisal appraisal) returns string|error {
     appraisal.is_active = true;
     sql:ExecutionResult _ = check dbconnection:dbClient->execute(`
@@ -45,14 +53,12 @@ public isolated function editAppraisal(int appr_id, Appraisal appraisal) returns
     return "updated successfully";
 }
 
-
 public isolated function deleteAppraisal(int id) returns string|error? {
-     sql:ExecutionResult _ = check dbconnection:dbClient->execute(
+    sql:ExecutionResult _ = check dbconnection:dbClient->execute(
         `UPDATE big_billion_cars."Appraisal" SET is_active = false WHERE appr_id= ${id}`
     );
     return "appraisal car deleted successfully";
 }
-
 
 public isolated function showAppraisal(int appr_id) returns Appraisal|error {
     Appraisal appr = check dbconnection:dbClient->queryRow(
@@ -61,23 +67,23 @@ public isolated function showAppraisal(int appr_id) returns Appraisal|error {
     return appr;
 }
 
-
-
 public isolated function downloadFile(string imageName) returns byte[]|error? {
 
-    string imagePath = "D:/ballerina practice/ballerina images/"+imageName;
+    string imagePath = "D:/ballerina practice/ballerina images/" + imageName;
     byte[] bytes = check io:fileReadBytes(imagePath);
     return bytes;
 }
 
-public isolated function apprList(int user_id) returns Appraisal|error {
-    Appraisal appr = check dbconnection:dbClient->queryRow(
-        `SELECT * FROM big_billion_cars."Appraisal"  WHERE user_id = ${user_id}`
+
+public isolated function getApprList(int user_id) returns Appraisal[]|error {
+    Appraisal[] apprs = [];
+    stream<Appraisal, error?> resultStream = dbconnection:dbClient->query(
+        `SELECT * FROM big_billion_cars."Appraisal" WHERE user_id = ${user_id}`
     );
-    return appr;
+    check from Appraisal appr in resultStream
+        do {
+            apprs.push(appr);
+        };
+    check resultStream.close();
+    return apprs;
 }
-
-
-
-
-

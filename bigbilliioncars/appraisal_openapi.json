@@ -1,0 +1,385 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "Appraisal",
+    "version" : "0.1.0"
+  },
+  "servers" : [ {
+    "url" : "{server}:{port}/appraisal",
+    "variables" : {
+      "server" : {
+        "default" : "http://localhost"
+      },
+      "port" : {
+        "default" : "8080"
+      }
+    }
+  } ],
+  "paths" : {
+    "/addAppraisal" : {
+      "post" : {
+        "operationId" : "postAddappraisal",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Appraisal"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "integer",
+                  "format" : "int64"
+                }
+              }
+            }
+          },
+          "202" : {
+            "description" : "Accepted"
+          },
+          "400" : {
+            "description" : "BadRequest"
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorPayload"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/editAppraisal" : {
+      "post" : {
+        "operationId" : "postEditappraisal",
+        "parameters" : [ {
+          "name" : "appr_id",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Appraisal"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorPayload"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/deleteAppraisal" : {
+      "post" : {
+        "operationId" : "postDeleteappraisal",
+        "parameters" : [ {
+          "name" : "appr_id",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "202" : {
+            "description" : "Accepted"
+          },
+          "400" : {
+            "description" : "BadRequest"
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorPayload"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/downloadImage" : {
+      "post" : {
+        "operationId" : "postDownloadimage",
+        "parameters" : [ {
+          "name" : "imageName",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "application/octet-stream" : {
+                "schema" : {
+                  "type" : "string",
+                  "format" : "byte"
+                }
+              }
+            }
+          },
+          "202" : {
+            "description" : "Accepted"
+          },
+          "400" : {
+            "description" : "BadRequest"
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorPayload"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fetchAppraisal" : {
+      "get" : {
+        "operationId" : "getFetchappraisal",
+        "parameters" : [ {
+          "name" : "appr_id",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Ok",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Appraisal"
+                }
+              }
+            }
+          },
+          "202" : {
+            "description" : "Accepted"
+          },
+          "400" : {
+            "description" : "BadRequest"
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorPayload"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uploadImage" : {
+      "post" : {
+        "operationId" : "postUploadimage",
+        "requestBody" : {
+          "content" : {
+            "*/*" : {
+              "schema" : {
+                "description" : "Any type of entity body"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorPayload"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apprList" : {
+      "get" : {
+        "operationId" : "getApprlist",
+        "parameters" : [ {
+          "name" : "user_id",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Ok",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Appraisal"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorPayload"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "ErrorPayload" : {
+        "type" : "object",
+        "properties" : {
+          "reason" : {
+            "type" : "string",
+            "description" : "Reason phrase"
+          },
+          "path" : {
+            "type" : "string",
+            "description" : "Request path"
+          },
+          "method" : {
+            "type" : "string",
+            "description" : "Method type of the request"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "Error message"
+          },
+          "timestamp" : {
+            "type" : "string",
+            "description" : "Timestamp of the error"
+          },
+          "status" : {
+            "type" : "integer",
+            "description" : "Relevant HTTP status code",
+            "format" : "int32"
+          }
+        }
+      },
+      "Appraisal" : {
+        "required" : [ "exteriorColor", "img1", "interiorColor", "user_id", "vehMake", "vehModel", "vehSeries", "vehYear", "vin" ],
+        "type" : "object",
+        "properties" : {
+          "appr_id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "vin" : {
+            "type" : "string"
+          },
+          "vehYear" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "vehMake" : {
+            "type" : "string"
+          },
+          "vehModel" : {
+            "type" : "string"
+          },
+          "vehSeries" : {
+            "type" : "string"
+          },
+          "interiorColor" : {
+            "type" : "string"
+          },
+          "exteriorColor" : {
+            "type" : "string"
+          },
+          "user_id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "is_active" : {
+            "type" : "boolean"
+          },
+          "img1" : {
+            "type" : "string"
+          }
+        }
+      }
+    }
+  }
+}
