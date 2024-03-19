@@ -17,13 +17,13 @@ service /searchFactory on httpl {
     isolated resource function post buyCar(int appr_id, int buyerUser_id) returns string|error {
         return searchFactory:vehicleBuy(appr_id, buyerUser_id);
     }
-    isolated resource function post searchFacList(int appr_id,int pageNumber,int pageSize) returns model:Appraisal[]|error {
-        return searchFactory:getSearchFacList(appr_id, pageNumber,pageSize);
+    isolated resource function post searchFacList(int user_id,int pageNumber,int pageSize) returns model:Appraisal[]|error {
+        return searchFactory:getSearchFacList(user_id, pageNumber,pageSize);
     }
-    isolated resource function post purList(int appr_id,int pageNumber,int pageSize) returns model:Appraisal[]|error {
-        return searchFactory:getMyPurList(appr_id, pageNumber,pageSize);
+    isolated resource function post purList(int user_id,int pageNumber,int pageSize) returns model:Appraisal[]|error {
+        return searchFactory:getMyPurList(user_id, pageNumber,pageSize);
     }
-    isolated resource function post salesList(int appr_id,int pageNumber,int pageSize) returns model:Appraisal[]|error {
-        return searchFactory:getMySalesList(appr_id, pageNumber,pageSize);
+    isolated resource function post salesList(int user_id,int pageNumber,int pageSize) returns model:Appraisal[]|error {
+        return searchFactory:getMySalesList(user_id, pageNumber,pageSize);
     }
 }
