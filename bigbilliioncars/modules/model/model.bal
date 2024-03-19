@@ -48,7 +48,7 @@ public isolated function editAppraisal(int appr_id, Appraisal appraisal) returns
     sql:ExecutionResult _ = check dbconnection:dbClient->execute(`
         UPDATE big_billion_cars."Appraisal"
 	SET vin=${appraisal.vin}, "vehYear"=${appraisal.vehYear}, "vehModel"=${appraisal.vehModel}, "vehSeries"=${appraisal.vehSeries}, "vehMake"=${appraisal.vehMake}, "interiorColor"=${appraisal.interiorColor}, "exteriorColor"=${appraisal.exteriorColor}, img1=${appraisal.img1}
-	WHERE appr_id=${appr_id}`);
+	WHERE appr_id=${appr_id} AND is_active=true`);
 
     return "updated successfully";
 }
@@ -62,7 +62,7 @@ public isolated function deleteAppraisal(int id) returns string|error? {
 
 public isolated function showAppraisal(int appr_id) returns Appraisal|error {
     Appraisal appr = check dbconnection:dbClient->queryRow(
-        `SELECT * FROM big_billion_cars."Appraisal" WHERE appr_id = ${appr_id}`
+        `SELECT * FROM big_billion_cars."Appraisal" WHERE appr_id = ${appr_id} AND is_active=true`
     );
     return appr;
 }
@@ -75,10 +75,17 @@ public isolated function downloadFile(string imageName) returns byte[]|error? {
 }
 
 
-public isolated function getApprList(int user_id) returns Appraisal[]|error {
+public isolated function getApprList(int user_id,int pageNumber,int pageSize ) returns Appraisal[]|error {
+    int pageNum;
+    if(pageNumber<=0){
+        pageNum=1;
+    }else{
+        pageNum=pageNumber;
+    }
+    int offset = (pageNum - 1) * pageSize; // Calculate the offset
     Appraisal[] apprs = [];
     stream<Appraisal, error?> resultStream = dbconnection:dbClient->query(
-        `SELECT * FROM big_billion_cars."Appraisal" WHERE user_id = ${user_id}`
+        `SELECT * FROM big_billion_cars."Appraisal" WHERE user_id = ${user_id} and "invntrySts"='created' AND is_active=true LIMIT ${pageSize} OFFSET ${offset}`
     );
     check from Appraisal appr in resultStream
         do {

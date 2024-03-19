@@ -46,8 +46,8 @@ service /appraisal on httpl {
     }
 
 
-    isolated resource function get apprList(int user_id) returns model:Appraisal[]|error {
-        return model:getApprList(user_id);
+    isolated resource function get apprList(int user_id,int pageNumber,int pageSize) returns model:Appraisal[]|error {
+        return model:getApprList(user_id,pageNumber,pageSize);
     }
 
 
