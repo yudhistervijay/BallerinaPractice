@@ -1,0 +1,90 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "Inventory",
+    "version" : "0.1.0"
+  },
+  "servers" : [ {
+    "url" : "{server}:{port}/inventory",
+    "variables" : {
+      "server" : {
+        "default" : "http://localhost"
+      },
+      "port" : {
+        "default" : "8080"
+      }
+    }
+  } ],
+  "paths" : {
+    "/moveToInv" : {
+      "post" : {
+        "operationId" : "postMovetoinv",
+        "parameters" : [ {
+          "name" : "appr_id",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorPayload"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "ErrorPayload" : {
+        "type" : "object",
+        "properties" : {
+          "reason" : {
+            "type" : "string",
+            "description" : "Reason phrase"
+          },
+          "path" : {
+            "type" : "string",
+            "description" : "Request path"
+          },
+          "method" : {
+            "type" : "string",
+            "description" : "Method type of the request"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "Error message"
+          },
+          "timestamp" : {
+            "type" : "string",
+            "description" : "Timestamp of the error"
+          },
+          "status" : {
+            "type" : "integer",
+            "description" : "Relevant HTTP status code",
+            "format" : "int32"
+          }
+        }
+      }
+    }
+  }
+}

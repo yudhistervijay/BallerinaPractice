@@ -1,10 +1,13 @@
-# Returns the string `Hello` with the input string name.
-#
-# + name - name as a string
-# + return - "Hello, " with the input string name
-public function hello(string name) returns string {
-    if !(name is "") {
-        return "Hello, " + name;
-    }
-    return "Hello, World!";
+import big_billion_cars.dbconnection;
+
+import ballerina/sql;
+
+public isolated function moveToInv(int appr_id) returns string|error {
+    string invSts = "inventory";
+    sql:ExecutionResult _ = check dbconnection:dbClient->execute(
+        `UPDATE big_billion_cars."Appraisal"
+	SET invntrySts=${invSts} WHERE appr_id=${appr_id}`);
+
+    return "Moved to inventory";
 }
+
