@@ -1,5 +1,4 @@
 import ballerina/http;
-// import ballerina/mime;
 import ballerina/io;
 import big_billion_cars.model ;
 
@@ -7,7 +6,6 @@ listener http:Listener httpl = new(8080);
 
 
 
-//udp:Service obj = service object 
 @http:ServiceConfig {cors: {allowOrigins: ["http://localhost:4200"], 
 allowCredentials: false, 
 allowHeaders: ["Content-Type"],
@@ -46,6 +44,12 @@ service /appraisal on httpl {
         check streamer.close();
         return "File Received!";
     }
+
+
+    isolated resource function get apprList(int user_id) returns model:Appraisal[]|error {
+        return model:getApprList(user_id);
+    }
+
 
     
 

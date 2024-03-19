@@ -1,5 +1,4 @@
 import big_billion_cars.dbconnection;
-
 import ballerina/io;
 import ballerina/sql;
 import ballerinax/postgresql.driver as _;
@@ -21,6 +20,11 @@ public type Appraisal record {|
     int buyerUser_id?;
 
 |};
+
+
+Appraisal[] apprs = [];
+
+// time:Time time1 = time:parse("2017-06-26T09:46:22.444-0500", "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
 public isolated function addAppraisal(Appraisal appraisal) returns int|error {
     appraisal.is_active = true;
@@ -71,4 +75,15 @@ public isolated function downloadFile(string imageName) returns byte[]|error? {
 }
 
 
-
+public isolated function getApprList(int user_id) returns Appraisal[]|error {
+    Appraisal[] apprs = [];
+    stream<Appraisal, error?> resultStream = dbconnection:dbClient->query(
+        `SELECT * FROM big_billion_cars."Appraisal" WHERE user_id = ${user_id}`
+    );
+    check from Appraisal appr in resultStream
+        do {
+            apprs.push(appr);
+        };
+    check resultStream.close();
+    return apprs;
+}
