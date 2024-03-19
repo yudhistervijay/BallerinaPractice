@@ -22,4 +22,8 @@ service /favourite on httpl {
     isolated resource function post removeFav(int appr_id, int user_id) returns string|error {
         return favoriteVehicle:removeFavVeh(appr_id, user_id);
     }
+
+    isolated resource function post favVehList(int appr_id,int pageNumber,int pageSize) returns favoriteVehicle:FavVeh[]|error {
+        return favoriteVehicle:getFavVehList(appr_id, pageNumber,pageSize);
+    }
 }
