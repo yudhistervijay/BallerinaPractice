@@ -7,7 +7,7 @@ public type FavVeh record {|
     int favVeh_id?;
     int appr_id;
     int user_id;
-    boolean isWishList;
+    boolean isWishList?;
 |};
 
 
@@ -37,7 +37,7 @@ public isolated function addFavVeh(int appr_id, int user_id) returns string|erro
 public isolated function removeFavVeh(int appr_id, int user_id) returns string|error {
 
     sql:ExecutionResult _ = check dbconnection:dbClient->execute(`
-        UPDATE big_billion_cars."FavVeh" SET isWishList=false WHERE appr_id=${appr_id} AND user_id=${user_id}`);
+        UPDATE big_billion_cars."FavVeh" SET "isWishList"=false WHERE appr_id=${appr_id} AND user_id=${user_id}`);
 
     return "vehicle has been removed to favorite";
 }
@@ -53,7 +53,7 @@ public isolated function getFavVehList(int user_id,int pageNumber,int pageSize) 
     int offset = (pageNum - 1) * pageSize;
     FavVeh[] fV = [];
     stream<FavVeh, error?> resultStream = dbconnection:dbClient->query(
-        `SELECT * FROM big_billion_cars."FavVeh" WHERE user_id = ${user_id} AND isWishList=true LIMIT ${pageSize} OFFSET ${offset}`
+        `SELECT * FROM big_billion_cars."FavVeh" WHERE user_id = ${user_id} AND "isWishList"=true LIMIT ${pageSize} OFFSET ${offset}`
     );
     check from FavVeh favVeh in resultStream
         do {

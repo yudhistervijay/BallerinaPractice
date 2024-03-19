@@ -23,9 +23,11 @@ dependencies = [
 modules = [
 	{org = "admin", packageName = "big_billion_cars", moduleName = "big_billion_cars"},
 	{org = "admin", packageName = "big_billion_cars", moduleName = "big_billion_cars.dbconnection"},
+	{org = "admin", packageName = "big_billion_cars", moduleName = "big_billion_cars.favoriteVehicle"},
 	{org = "admin", packageName = "big_billion_cars", moduleName = "big_billion_cars.inventory"},
 	{org = "admin", packageName = "big_billion_cars", moduleName = "big_billion_cars.mailcon"},
 	{org = "admin", packageName = "big_billion_cars", moduleName = "big_billion_cars.model"},
+	{org = "admin", packageName = "big_billion_cars", moduleName = "big_billion_cars.searchFactory"},
 	{org = "admin", packageName = "big_billion_cars", moduleName = "big_billion_cars.user"}
 ]
 

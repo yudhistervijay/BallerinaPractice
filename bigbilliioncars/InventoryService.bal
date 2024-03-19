@@ -18,7 +18,7 @@ service /inventory on httpl {
         return inventory:moveToInv(appr_id);
     }
 
-    isolated resource function post invList(int appr_id,int pageNumber,int pageSize) returns model:Appraisal[]|error {
-        return inventory:getInvList(appr_id,pageNumber,pageSize);
+    isolated resource function post invList(int user_id,int pageNumber,int pageSize) returns model:Appraisal[]|error {
+        return inventory:getInvList(user_id,pageNumber,pageSize);
     }
 }

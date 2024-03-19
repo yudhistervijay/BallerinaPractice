@@ -6,7 +6,7 @@ public isolated function vehicleBuy(int appr_id,int buyerUser_id) returns string
     boolean soldStatus=true;
     sql:ExecutionResult _ = check dbconnection:dbClient->execute(
         `UPDATE big_billion_cars."Appraisal"
-	SET soldOut=${soldStatus},buyerUser_id=${buyerUser_id} WHERE appr_id=${appr_id} AND is_active=true`);
+	SET "soldOut"=${soldStatus},buyerUser_id=${buyerUser_id} WHERE appr_id=${appr_id} AND is_active=true`);
 
     return "car purchase successfully";
 }

@@ -15,10 +15,13 @@ public type Appraisal record {|
     int user_id;
     boolean is_active?;
     string img1;
+    string img2?;
+    string img3?;
+    string img4?;
     string invntrySts?;
-    boolean soldOut;
+    boolean soldOut?;
     int buyerUser_id?;
-
+    float carPrice;
 |};
 
 
@@ -29,12 +32,14 @@ Appraisal[] apprs = [];
 public isolated function addAppraisal(Appraisal appraisal) returns int|error {
     appraisal.is_active = true;
     appraisal.invntrySts = "created";
+    appraisal.soldOut= false;
     sql:ExecutionResult result = check dbconnection:dbClient->execute(`
-        INSERT INTO big_billion_cars."Appraisal" (vin,"vehYear","vehMake", "vehModel","vehSeries","interiorColor","exteriorColor",user_id, is_active,"img1","invntrySts")
+        INSERT INTO big_billion_cars."Appraisal" (vin,"vehYear","vehMake", "vehModel","vehSeries","interiorColor","exteriorColor",user_id, is_active,"img1","img2","img3","img4","invntrySts","soldOut","carPrice")
         VALUES (${appraisal.vin}, ${appraisal.vehYear},${appraisal.vehMake},${appraisal.vehModel},  
                 ${appraisal.vehSeries}, ${appraisal.interiorColor},
                 ${appraisal.exteriorColor},${appraisal.user_id}, 
-                ${appraisal.is_active},${appraisal.img1},${appraisal.invntrySts})`);
+                ${appraisal.is_active},${appraisal.img1},${appraisal.img2},${appraisal.img3},${appraisal.img4},
+                ${appraisal.invntrySts},${appraisal.soldOut},${appraisal.carPrice})`);
     int|string? lastInsertId = result.lastInsertId;
     if lastInsertId is int {
         return lastInsertId;
