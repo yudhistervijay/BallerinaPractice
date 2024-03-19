@@ -52,8 +52,11 @@ public isolated function editAppraisal(int appr_id, Appraisal appraisal) returns
     appraisal.is_active = true;
     sql:ExecutionResult _ = check dbconnection:dbClient->execute(`
         UPDATE big_billion_cars."Appraisal"
-	SET vin=${appraisal.vin}, "vehYear"=${appraisal.vehYear}, "vehModel"=${appraisal.vehModel}, "vehSeries"=${appraisal.vehSeries}, "vehMake"=${appraisal.vehMake}, "interiorColor"=${appraisal.interiorColor}, "exteriorColor"=${appraisal.exteriorColor}, img1=${appraisal.img1}
-	WHERE appr_id=${appr_id} AND is_active=true`);
+	SET vin=${appraisal.vin}, "vehYear"=${appraisal.vehYear}, "vehModel"=${appraisal.vehModel}, 
+    "vehSeries"=${appraisal.vehSeries}, "vehMake"=${appraisal.vehMake}, 
+    "interiorColor"=${appraisal.interiorColor}, "exteriorColor"=${appraisal.exteriorColor}, 
+    img1=${appraisal.img1},img2=${appraisal.img2},img3=${appraisal.img3},img4=${appraisal.img4},
+    "carPrice"=${appraisal.carPrice} WHERE appr_id=${appr_id} AND is_active=true`);
 
     return "updated successfully";
 }

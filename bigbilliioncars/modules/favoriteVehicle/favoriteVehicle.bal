@@ -1,7 +1,7 @@
 import big_billion_cars.dbconnection;
 
 import ballerina/sql;
-import big_billion_cars.model;
+// import big_billion_cars.model;
 
 public type FavVeh record {|
     int favVeh_id?;
@@ -12,24 +12,24 @@ public type FavVeh record {|
 
 
 public isolated function addFavVeh(int appr_id, int user_id) returns string|error {
-    string invSts = "inventory";
-    model:Appraisal wish = check dbconnection:dbClient->queryRow(
-        `SELECT * FROM big_billion_cars."Appraisal" WHERE appr_id = ${appr_id} AND invntrySts=${invSts} AND
-        is_active = true`
-    );
-    FavVeh? wishListedCar = check dbconnection:dbClient->queryRow(
-        `SELECT * FROM big_billion_cars."FavVeh" WHERE appr_id = ${appr_id} AND user_id=${user_id}`
-    );
+    // string invSts = "inventory";
+    // model:Appraisal wish = check dbconnection:dbClient->queryRow(
+    //     `SELECT * FROM big_billion_cars."Appraisal" WHERE appr_id = ${appr_id} AND invntrySts=${invSts} AND
+    //     is_active = true`
+    // );
+    // FavVeh? wishListedCar = check dbconnection:dbClient->queryRow(
+    //     `SELECT * FROM big_billion_cars."FavVeh" WHERE appr_id = ${appr_id} AND user_id=${user_id}`
+    // );
 
-    if (wishListedCar is ()) {
+    // if (wishListedCar is ()) {
         boolean wishlist = true;
-        sql:ExecutionResult result = check dbconnection:dbClient->execute(`
-        INSERT INTO big_billion_cars."FavVeh" (appr_id,user_id,"isWishList")
-        VALUES (${wish.appr_id}, ${wish.user_id},${wishlist})`);
-    } else {
         sql:ExecutionResult _ = check dbconnection:dbClient->execute(`
-        UPDATE big_billion_cars."FavVeh" SET isWishList=true WHERE appr_id=${appr_id} AND user_id=${user_id}`);
-    }
+        INSERT INTO big_billion_cars."FavVeh" (appr_id,user_id,"isWishList")
+        VALUES (${appr_id}, ${user_id},${wishlist})`);
+    // } else {
+    //     sql:ExecutionResult _ = check dbconnection:dbClient->execute(`
+    //     UPDATE big_billion_cars."FavVeh" SET isWishList=true WHERE appr_id=${appr_id} AND user_id=${user_id}`);
+    // }
 
     return "vehicle has been add to favorite";
 }
