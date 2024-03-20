@@ -1,6 +1,6 @@
 import ballerina/http;
 import big_billion_cars.user;
-// import big_billion_cars.mailcon;
+
 
 //service /users on new http:Listener(8082) 
 
@@ -19,7 +19,7 @@ service /user on httpl{
         return user:getUsers(id);
     }
 
-     resource function post addUser(user:Users user)returns int|error? {
+     isolated resource function post addUser(user:Users user)returns int|error? {
         return user:addUser(user);
     }
 

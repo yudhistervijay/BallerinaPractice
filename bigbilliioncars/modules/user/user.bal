@@ -1,7 +1,6 @@
 import ballerinax/postgresql.driver as _;
 import ballerina/sql;
 import big_billion_cars.dbconnection;
-import big_billion_cars.mailcon;
 
 public type Users record {|
     int user_id?;
@@ -27,15 +26,14 @@ public  isolated function getUsers(int id) returns Users|error {
     return users;
 }
 
-public  function addUser(Users user) returns int|error {
+public isolated function addUser(Users user) returns int|error {
     user.is_active = true;
     sql:ExecutionResult result = check dbconnection:dbClient->execute(`
         INSERT INTO big_billion_cars.users (first_name, last_name,username,password, email, phone, is_active)
         VALUES (${user.first_name}, ${user.last_name},${user.username},${user.password},  
                 ${user.email}, ${user.phone} , ${user.is_active})`);
     int|string? lastInsertId = result.lastInsertId;
-    if lastInsertId is int {
-        error? mailService = mailcon:mailService();
+    if lastInsertId is int {        
         return lastInsertId;
     } else {
         return error("Unable to obtain last insert ID");

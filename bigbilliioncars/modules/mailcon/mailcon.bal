@@ -1,20 +1,22 @@
 import ballerina/email;
+import big_billion_cars.user;
+import big_billion_cars.model;
 
 email:SmtpConfiguration smtpConfig = {
     port: 465
 };
 
 
-public function mailService() returns error?{
-
+public function mailService(int userId) returns error?{
 email:SmtpClient smtpClient = check new ("smtp.gmail.com", "yudhistervijay@gmail.com", "aarxzdxvixtaidzo", smtpConfig);
+user:Users users = check user:getUsers(userId);
+string gmail=users.email;
 
 email:Message email = {
-    to: "kalyan.dey27@gmail.com",
-    subject: "Greetings from bigbillion cars",
-    body: "Your accounted is created successfully.",
+    to: gmail,
+    subject: "Greetings from Big Billion Cars",
+    body: "CAR details created successfully.",
     'from: "yudhistervijay@gmail.com"
-    // sender: "yudhistervijay@gmail.com"
 };
 
 check smtpClient->sendMessage(email);

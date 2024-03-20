@@ -13,8 +13,8 @@ exposeHeaders: ["*"],
 maxAge: 84900}}
 
 service /appraisal on httpl {
- isolated resource function post addAppraisal(model:Appraisal appraisal)returns int|error? {
-        return model:addAppraisal(appraisal);
+    resource function post addAppraisal(int user_id,model:Appraisal appraisal)returns int|error? {
+        return model:addAppraisal(user_id,appraisal);
     }
 
     isolated resource function post editAppraisal(int appr_id,model:Appraisal appraisal)returns string|error {
