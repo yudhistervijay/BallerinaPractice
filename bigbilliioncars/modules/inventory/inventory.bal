@@ -5,10 +5,11 @@ import big_billion_cars.model;
 
 
 public isolated function moveToInv(int appr_id) returns string|error {
+    time:Utc currTime = time:utcNow();
     string invSts = "inventory";
     sql:ExecutionResult _ = check dbconnection:dbClient->execute(
         `UPDATE big_billion_cars."Appraisal"
-	SET "invntrySts"=${invSts} WHERE appr_id=${appr_id} AND "is_active"=true`);
+	SET "invntrySts"=${invSts},"createdOn"=${currTime} WHERE appr_id=${appr_id} AND "is_active"=true`);
 
     return "Moved to inventory";
 }
