@@ -51,14 +51,5 @@ service /appraisal on httpl {
         return model:getApprList(user_id,pageNumber,pageSize);
     }
 
-    // isolated resource function get time() returns time:Utc {
-    //     return model:time();
-    // }
-
-
-    
-
-
-
 }
 

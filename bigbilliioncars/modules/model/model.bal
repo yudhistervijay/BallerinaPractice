@@ -117,20 +117,3 @@ public isolated function getApprList(int user_id, int pageNumber, int pageSize) 
     return apprs;
 }
 
-// public isolated function time() returns time:Utc {
-
-//     // time:Utc currTime = time:utcNow();
-    
-//     time:Utc utc = time:utcNow();
-//     string date = time:utcToString(utc);
-//     //  // Parse the UTC timestamp string to a Time object
-//     // time:Utc utcTime = check time:parse(date, "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS'Z'");
-    
-//     // // Define the desired output format
-//     // string desiredFormat = "yyyy-MM-dd HH:mm:ss"; // Example: "YYYY-MM-DD HH:MM:SS"
-    
-//     // // Format the Time object into the desired format
-//     // string formattedDateTime = time:format(utcTime, desiredFormat);
-    
-//     return utc;
-// }
