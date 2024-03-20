@@ -1,6 +1,7 @@
 import big_billion_cars.dbconnection;
 
 import ballerina/sql;
+import ballerina/time;
 // import big_billion_cars.model;
 
 public type FavVeh record {|
@@ -8,10 +9,13 @@ public type FavVeh record {|
     int appr_id;
     int user_id;
     boolean isWishList?;
+    time:Utc createdOn?;
 |};
 
 
 public isolated function addFavVeh(int appr_id, int user_id) returns string|error {
+
+    time:Utc currTime = time:utcNow();
     // string invSts = "inventory";
     // model:Appraisal wish = check dbconnection:dbClient->queryRow(
     //     `SELECT * FROM big_billion_cars."Appraisal" WHERE appr_id = ${appr_id} AND invntrySts=${invSts} AND
@@ -24,8 +28,8 @@ public isolated function addFavVeh(int appr_id, int user_id) returns string|erro
     // if (wishListedCar is ()) {
         boolean wishlist = true;
         sql:ExecutionResult _ = check dbconnection:dbClient->execute(`
-        INSERT INTO big_billion_cars."FavVeh" (appr_id,user_id,"isWishList")
-        VALUES (${appr_id}, ${user_id},${wishlist})`);
+        INSERT INTO big_billion_cars."FavVeh" (appr_id,user_id,"isWishList","createdOn")
+        VALUES (${appr_id}, ${user_id},${wishlist},${currTime})`);
     // } else {
     //     sql:ExecutionResult _ = check dbconnection:dbClient->execute(`
     //     UPDATE big_billion_cars."FavVeh" SET isWishList=true WHERE appr_id=${appr_id} AND user_id=${user_id}`);
@@ -53,7 +57,8 @@ public isolated function getFavVehList(int user_id,int pageNumber,int pageSize) 
     int offset = (pageNum - 1) * pageSize;
     FavVeh[] fV = [];
     stream<FavVeh, error?> resultStream = dbconnection:dbClient->query(
-        `SELECT * FROM big_billion_cars."FavVeh" WHERE user_id = ${user_id} AND "isWishList"=true LIMIT ${pageSize} OFFSET ${offset}`
+        `SELECT * FROM big_billion_cars."FavVeh" WHERE user_id = ${user_id} AND "isWishList"=true 
+        ORDER BY "createdOn" DESC LIMIT ${pageSize} OFFSET ${offset}`
     );
     check from FavVeh favVeh in resultStream
         do {

@@ -2,6 +2,7 @@ import ballerina/http;
 import ballerina/io;
 import big_billion_cars.model ;
 
+
 listener http:Listener httpl = new(8080);
 
 
@@ -49,6 +50,10 @@ service /appraisal on httpl {
     isolated resource function get apprList(int user_id,int pageNumber,int pageSize) returns model:Appraisal[]|error {
         return model:getApprList(user_id,pageNumber,pageSize);
     }
+
+    // isolated resource function get time() returns time:Utc {
+    //     return model:time();
+    // }
 
 
     

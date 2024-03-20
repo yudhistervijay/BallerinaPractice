@@ -25,7 +25,7 @@ public isolated function getInvList(int user_id,int pageNumber,int pageSize) ret
     string invSts = "inventory";
     stream<model:Appraisal, error?> resultStream = dbconnection:dbClient->query(
         `SELECT * FROM big_billion_cars."Appraisal" WHERE user_id = ${user_id} AND "invntrySts"=${invSts}
-        AND "soldOut" =false AND "is_active"=true LIMIT ${pageSize} OFFSET ${offset}`
+        AND "soldOut" =false AND "is_active"=true ORDER BY "createdOn" DESC LIMIT ${pageSize} OFFSET ${offset}`
     );
     check from model:Appraisal appr in resultStream
         do {

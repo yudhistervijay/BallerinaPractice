@@ -1,7 +1,10 @@
 import big_billion_cars.dbconnection;
+
 import ballerina/io;
 import ballerina/sql;
 import ballerinax/postgresql.driver as _;
+import ballerina/time;
+
 
 public type Appraisal record {|
     int appr_id?;
@@ -12,7 +15,7 @@ public type Appraisal record {|
     string vehSeries;
     string interiorColor;
     string exteriorColor;
-    int user_id;
+    int user_id?;
     boolean is_active?;
     string img1;
     string img2?;
@@ -22,24 +25,27 @@ public type Appraisal record {|
     boolean soldOut?;
     int buyerUser_id?;
     float carPrice;
+    // string createdBy;
+    time:Utc createdOn?;
 |};
-
 
 Appraisal[] apprs = [];
 
 // time:Time time1 = time:parse("2017-06-26T09:46:22.444-0500", "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
 public isolated function addAppraisal(Appraisal appraisal) returns int|error {
+    time:Utc currTime = time:utcNow();
     appraisal.is_active = true;
     appraisal.invntrySts = "created";
-    appraisal.soldOut= false;
+    appraisal.soldOut = false;
     sql:ExecutionResult result = check dbconnection:dbClient->execute(`
-        INSERT INTO big_billion_cars."Appraisal" (vin,"vehYear","vehMake", "vehModel","vehSeries","interiorColor","exteriorColor",user_id, is_active,"img1","img2","img3","img4","invntrySts","soldOut","carPrice")
+        INSERT INTO big_billion_cars."Appraisal" (vin,"vehYear","vehMake", "vehModel","vehSeries","interiorColor","exteriorColor",user_id, is_active,"img1","img2","img3","img4","invntrySts","soldOut","carPrice","createdOn")
         VALUES (${appraisal.vin}, ${appraisal.vehYear},${appraisal.vehMake},${appraisal.vehModel},  
                 ${appraisal.vehSeries}, ${appraisal.interiorColor},
                 ${appraisal.exteriorColor},${appraisal.user_id}, 
                 ${appraisal.is_active},${appraisal.img1},${appraisal.img2},${appraisal.img3},${appraisal.img4},
-                ${appraisal.invntrySts},${appraisal.soldOut},${appraisal.carPrice})`);
+                ${appraisal.invntrySts},${appraisal.soldOut},${appraisal.carPrice},
+                ${currTime})`);
     int|string? lastInsertId = result.lastInsertId;
     if lastInsertId is int {
         return lastInsertId;
@@ -82,18 +88,18 @@ public isolated function downloadFile(string imageName) returns byte[]|error? {
     return bytes;
 }
 
-
-public isolated function getApprList(int user_id,int pageNumber,int pageSize ) returns Appraisal[]|error {
+public isolated function getApprList(int user_id, int pageNumber, int pageSize) returns Appraisal[]|error {
     int pageNum;
-    if(pageNumber<=0){
-        pageNum=1;
-    }else{
-        pageNum=pageNumber;
+    if (pageNumber <= 0) {
+        pageNum = 1;
+    } else {
+        pageNum = pageNumber;
     }
     int offset = (pageNum - 1) * pageSize; // Calculate the offset
     Appraisal[] apprs = [];
     stream<Appraisal, error?> resultStream = dbconnection:dbClient->query(
-        `SELECT * FROM big_billion_cars."Appraisal" WHERE user_id = ${user_id} and "invntrySts"='created' AND is_active=true LIMIT ${pageSize} OFFSET ${offset}`
+        `SELECT * FROM big_billion_cars."Appraisal" WHERE user_id = ${user_id} and "invntrySts"='created' AND is_active=true 
+        ORDER BY "createdOn" DESC  LIMIT ${pageSize} OFFSET ${offset}`
     );
     check from Appraisal appr in resultStream
         do {
@@ -102,3 +108,21 @@ public isolated function getApprList(int user_id,int pageNumber,int pageSize ) r
     check resultStream.close();
     return apprs;
 }
+
+// public isolated function time() returns time:Utc {
+
+//     // time:Utc currTime = time:utcNow();
+    
+//     time:Utc utc = time:utcNow();
+//     string date = time:utcToString(utc);
+//     //  // Parse the UTC timestamp string to a Time object
+//     // time:Utc utcTime = check time:parse(date, "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS'Z'");
+    
+//     // // Define the desired output format
+//     // string desiredFormat = "yyyy-MM-dd HH:mm:ss"; // Example: "YYYY-MM-DD HH:MM:SS"
+    
+//     // // Format the Time object into the desired format
+//     // string formattedDateTime = time:format(utcTime, desiredFormat);
+    
+//     return utc;
+// }

@@ -24,7 +24,7 @@ public isolated function getSearchFacList(int user_id,int pageNumber,int pageSiz
     string invSts = "inventory";
     stream<model:Appraisal, error?> resultStream = dbconnection:dbClient->query(
         `SELECT * FROM big_billion_cars."Appraisal" WHERE user_id <> ${user_id} AND "invntrySts"=${invSts}
-        AND "soldOut" =false AND is_active=true LIMIT ${pageSize} OFFSET ${offset}`
+        AND "soldOut" =false AND is_active=true ORDER BY "createdOn" DESC LIMIT ${pageSize} OFFSET ${offset}`
     );
     check from model:Appraisal appr in resultStream
         do {
@@ -46,7 +46,7 @@ public isolated function getMyPurList(int user_id,int pageNumber,int pageSize) r
     string invSts = "inventory";
     stream<model:Appraisal, error?> resultStream = dbconnection:dbClient->query(
         `SELECT * FROM big_billion_cars."Appraisal" WHERE "buyerUser_id" = ${user_id} AND "invntrySts"=${invSts}
-        AND "soldOut" =true AND is_active=true LIMIT ${pageSize} OFFSET ${offset}`
+        AND "soldOut" =true AND is_active=true ORDER BY "createdOn" DESC LIMIT ${pageSize} OFFSET ${offset}`
     );
     check from model:Appraisal appr in resultStream
         do {
@@ -68,7 +68,7 @@ public isolated function getMySalesList(int user_id,int pageNumber,int pageSize)
     string invSts = "inventory";
     stream<model:Appraisal, error?> resultStream = dbconnection:dbClient->query(
         `SELECT * FROM big_billion_cars."Appraisal" WHERE user_id = ${user_id} AND "invntrySts"=${invSts}
-        AND "soldOut" =true AND is_active=true LIMIT ${pageSize} OFFSET ${offset}`
+        AND "soldOut" =true AND is_active=true ORDER BY "createdOn" DESC LIMIT ${pageSize} OFFSET ${offset}`
     );
     check from model:Appraisal appr in resultStream
         do {
