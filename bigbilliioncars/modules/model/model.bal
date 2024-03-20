@@ -46,7 +46,7 @@ public function addAppraisal(int userId,Appraisal appraisal) returns int|error {
                 ${appraisal.invntrySts},${appraisal.soldOut},${appraisal.carPrice})`);
     int|string? lastInsertId = result.lastInsertId;
     if lastInsertId is int {
-        error? mailService = mailcon:mailService(userId);
+        error? mailService = mailcon:mailService(userId,appraisal.vin);
         return lastInsertId;
     } else {
         return error("Unable to add the appraisal");
