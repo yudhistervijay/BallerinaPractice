@@ -1,9 +1,10 @@
 import big_billion_cars.dbconnection;
 import big_billion_cars.mailcon;
+import big_billion_cars.user;
 import ballerina/io;
 import ballerina/sql;
 import ballerinax/postgresql.driver as _;
-// import ballerina/time;
+
 
 public type Appraisal record {|
     int appr_id?;
@@ -24,7 +25,7 @@ public type Appraisal record {|
     boolean soldOut?;
     int buyerUser_id?;
     float carPrice;
-    // time:Date created_on;
+    string createdBy?;
 
 |};
 
@@ -37,13 +38,15 @@ public function addAppraisal(int userId,Appraisal appraisal) returns int|error {
     appraisal.is_active = true;
     appraisal.invntrySts = "created";
     appraisal.soldOut= false;
+    user:Users users = check user:getUsers(userId);
+    appraisal.createdBy = users.username;
     sql:ExecutionResult result = check dbconnection:dbClient->execute(`
-        INSERT INTO big_billion_cars."Appraisal" (vin,"vehYear","vehMake", "vehModel","vehSeries","interiorColor","exteriorColor",user_id, is_active,"img1","img2","img3","img4","invntrySts","soldOut","carPrice")
+        INSERT INTO big_billion_cars."Appraisal" (vin,"vehYear","vehMake", "vehModel","vehSeries","interiorColor","exteriorColor",user_id, is_active,"img1","img2","img3","img4","invntrySts","soldOut","carPrice","createdBy")
         VALUES (${appraisal.vin}, ${appraisal.vehYear},${appraisal.vehMake},${appraisal.vehModel},  
                 ${appraisal.vehSeries}, ${appraisal.interiorColor},
                 ${appraisal.exteriorColor},${userId}, 
                 ${appraisal.is_active},${appraisal.img1},${appraisal.img2},${appraisal.img3},${appraisal.img4},
-                ${appraisal.invntrySts},${appraisal.soldOut},${appraisal.carPrice})`);
+                ${appraisal.invntrySts},${appraisal.soldOut},${appraisal.carPrice},${appraisal.createdBy})`);
     int|string? lastInsertId = result.lastInsertId;
     if lastInsertId is int {
         error? mailService = mailcon:mailService(userId,appraisal.vin);
