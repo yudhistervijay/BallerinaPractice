@@ -28,7 +28,7 @@ public type Appraisal record {|
     boolean soldOut?;
     int buyerUser_id?;
     float carPrice;
-    string createdBy;
+    string createdBy?;
     time:Utc createdOn?;
 
 |};
