@@ -1,9 +1,12 @@
 import big_billion_cars.dbconnection;
 
+import big_billion_cars.mailcon;
+import big_billion_cars.user;
 import ballerina/io;
 import ballerina/sql;
 import ballerinax/postgresql.driver as _;
 import ballerina/time;
+
 
 
 public type Appraisal record {|
@@ -25,29 +28,33 @@ public type Appraisal record {|
     boolean soldOut?;
     int buyerUser_id?;
     float carPrice;
-    // string createdBy;
+    string createdBy;
     time:Utc createdOn?;
+
 |};
 
 Appraisal[] apprs = [];
 
 // time:Time time1 = time:parse("2017-06-26T09:46:22.444-0500", "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-public isolated function addAppraisal(Appraisal appraisal) returns int|error {
+
+public function addAppraisal(int userId,Appraisal appraisal) returns int|error {
     time:Utc currTime = time:utcNow();
     appraisal.is_active = true;
     appraisal.invntrySts = "created";
-    appraisal.soldOut = false;
+    appraisal.soldOut= false;
+    user:Users users = check user:getUsers(userId);
+    appraisal.createdBy = users.username;
     sql:ExecutionResult result = check dbconnection:dbClient->execute(`
-        INSERT INTO big_billion_cars."Appraisal" (vin,"vehYear","vehMake", "vehModel","vehSeries","interiorColor","exteriorColor",user_id, is_active,"img1","img2","img3","img4","invntrySts","soldOut","carPrice","createdOn")
+        INSERT INTO big_billion_cars."Appraisal" (vin,"vehYear","vehMake", "vehModel","vehSeries","interiorColor","exteriorColor",user_id, is_active,"img1","img2","img3","img4","invntrySts","soldOut","carPrice","createdBy","createdOn")
         VALUES (${appraisal.vin}, ${appraisal.vehYear},${appraisal.vehMake},${appraisal.vehModel},  
                 ${appraisal.vehSeries}, ${appraisal.interiorColor},
-                ${appraisal.exteriorColor},${appraisal.user_id}, 
+                ${appraisal.exteriorColor},${userId}, 
                 ${appraisal.is_active},${appraisal.img1},${appraisal.img2},${appraisal.img3},${appraisal.img4},
-                ${appraisal.invntrySts},${appraisal.soldOut},${appraisal.carPrice},
-                ${currTime})`);
+                ${appraisal.invntrySts},${appraisal.soldOut},${appraisal.carPrice},${appraisal.createdBy},${currTime})`);
     int|string? lastInsertId = result.lastInsertId;
     if lastInsertId is int {
+        error? mailService = mailcon:mailService(userId,appraisal.vin);
         return lastInsertId;
     } else {
         return error("Unable to add the appraisal");
