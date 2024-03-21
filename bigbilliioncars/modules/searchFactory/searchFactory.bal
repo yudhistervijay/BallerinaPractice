@@ -1,6 +1,7 @@
 import ballerina/sql;
 import big_billion_cars.dbconnection;
 import big_billion_cars.model;
+import ballerina/time;
 
 public isolated function vehicleBuy(int appr_id,int buyerUser_id) returns string|error {
     time:Utc currTime = time:utcNow();
