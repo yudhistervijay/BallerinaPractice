@@ -35,7 +35,6 @@ service /appraisal on httpl {
     }
 
 
-
     resource function post uploadImage(http:Request request) returns string|error {
         stream<byte[], io:Error?> streamer = check request.getByteStream();
 
@@ -55,8 +54,13 @@ service /appraisal on httpl {
     //     return model:time();
     // }
 
+    isolated resource function get filterAppraisal(int userId,string make,string model,int year,int pageNumber, int pageSize) returns model:Appraisal[]|error? {
+        return model:filterAppr(userId,make,model,year,pageNumber,pageSize);
+    }
 
     
+
+
 
 
 

@@ -30,6 +30,9 @@ public type Appraisal record {|
     float carPrice;
     string createdBy?;
     time:Utc createdOn?;
+    string engineType;
+    int vehMiles;
+    string transmission;
 
 |};
 
@@ -46,12 +49,12 @@ public function addAppraisal(int userId,Appraisal appraisal) returns int|error {
     user:Users users = check user:getUsers(userId);
     appraisal.createdBy = users.username;
     sql:ExecutionResult result = check dbconnection:dbClient->execute(`
-        INSERT INTO big_billion_cars."Appraisal" (vin,"vehYear","vehMake", "vehModel","vehSeries","interiorColor","exteriorColor",user_id, is_active,"img1","img2","img3","img4","invntrySts","soldOut","carPrice","createdBy","createdOn")
+        INSERT INTO big_billion_cars."Appraisal" (vin,"vehYear","vehMake", "vehModel","vehSeries","interiorColor","exteriorColor",user_id, is_active,"img1","img2","img3","img4","invntrySts","soldOut","carPrice","createdBy","createdOn","engineType","vehMiles","transmission")
         VALUES (${appraisal.vin}, ${appraisal.vehYear},${appraisal.vehMake},${appraisal.vehModel},  
                 ${appraisal.vehSeries}, ${appraisal.interiorColor},
                 ${appraisal.exteriorColor},${userId}, 
                 ${appraisal.is_active},${appraisal.img1},${appraisal.img2},${appraisal.img3},${appraisal.img4},
-                ${appraisal.invntrySts},${appraisal.soldOut},${appraisal.carPrice},${appraisal.createdBy},${currTime})`);
+                ${appraisal.invntrySts},${appraisal.soldOut},${appraisal.carPrice},${appraisal.createdBy},${currTime},${appraisal.engineType},${appraisal.vehMiles},${appraisal.transmission})`);
     int|string? lastInsertId = result.lastInsertId;
     if lastInsertId is int {
         error? mailService = mailcon:mailService(userId,appraisal.vin);
@@ -69,7 +72,7 @@ public isolated function editAppraisal(int appr_id, Appraisal appraisal) returns
     "vehSeries"=${appraisal.vehSeries}, "vehMake"=${appraisal.vehMake}, 
     "interiorColor"=${appraisal.interiorColor}, "exteriorColor"=${appraisal.exteriorColor}, 
     img1=${appraisal.img1},img2=${appraisal.img2},img3=${appraisal.img3},img4=${appraisal.img4},
-    "carPrice"=${appraisal.carPrice} WHERE appr_id=${appr_id} AND is_active=true`);
+    "carPrice"=${appraisal.carPrice},"engineType"=${appraisal.engineType},"vehMiles"=${appraisal.vehMiles},"transmission"=${appraisal.transmission} WHERE appr_id=${appr_id} AND is_active=true`);
 
     return "updated successfully";
 }
@@ -133,3 +136,28 @@ public isolated function getApprList(int user_id, int pageNumber, int pageSize) 
     
 //     return utc;
 // }
+
+
+ public isolated function filterAppr(int userId,string vehMake,string model, int year, int pageNumber, int pageSize) returns Appraisal[]|error {
+    int pageNum;
+    if (pageNumber <= 0) {
+        pageNum = 1;
+    } else {
+        pageNum = pageNumber;
+    }
+    int offset = (pageNum - 1) * pageSize; // Calculate the offset
+    Appraisal[] apprs = [];
+    stream<Appraisal, error?> resultStream = dbconnection:dbClient->query(
+        `SELECT * FROM big_billion_cars."Appraisal" WHERE user_id = ${userId} AND "invntrySts"='created'
+        AND is_active=true AND "vehYear" = ${year} AND  "vehMake" = ${vehMake} AND "vehModel" = ${model}   
+        ORDER BY "createdOn" DESC LIMIT ${pageSize} OFFSET ${offset}`
+    );
+    check from Appraisal appr in resultStream
+        do {
+            apprs.push(appr);
+        };
+    check resultStream.close();
+    return apprs;
+}
+
+
