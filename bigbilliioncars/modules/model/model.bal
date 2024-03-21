@@ -65,6 +65,7 @@ public function addAppraisal(int userId,Appraisal appraisal) returns int|error {
 }
 
 public isolated function editAppraisal(int appr_id, Appraisal appraisal) returns string|error {
+    time:Utc currTime = time:utcNow();
     appraisal.is_active = true;
     sql:ExecutionResult _ = check dbconnection:dbClient->execute(`
         UPDATE big_billion_cars."Appraisal"
@@ -72,7 +73,7 @@ public isolated function editAppraisal(int appr_id, Appraisal appraisal) returns
     "vehSeries"=${appraisal.vehSeries}, "vehMake"=${appraisal.vehMake}, 
     "interiorColor"=${appraisal.interiorColor}, "exteriorColor"=${appraisal.exteriorColor}, 
     img1=${appraisal.img1},img2=${appraisal.img2},img3=${appraisal.img3},img4=${appraisal.img4},
-    "carPrice"=${appraisal.carPrice},"engineType"=${appraisal.engineType},"vehMiles"=${appraisal.vehMiles},"transmission"=${appraisal.transmission} WHERE appr_id=${appr_id} AND is_active=true`);
+    "carPrice"=${appraisal.carPrice},"createdOn"=${currTime},"engineType"=${appraisal.engineType},"vehMiles"=${appraisal.vehMiles},"transmission"=${appraisal.transmission} WHERE appr_id=${appr_id} AND is_active=true`);
 
     return "updated successfully";
 }
@@ -119,23 +120,6 @@ public isolated function getApprList(int user_id, int pageNumber, int pageSize) 
     return apprs;
 }
 
-// public isolated function time() returns time:Utc {
-
-//     // time:Utc currTime = time:utcNow();
-    
-//     time:Utc utc = time:utcNow();
-//     string date = time:utcToString(utc);
-//     //  // Parse the UTC timestamp string to a Time object
-//     // time:Utc utcTime = check time:parse(date, "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS'Z'");
-    
-//     // // Define the desired output format
-//     // string desiredFormat = "yyyy-MM-dd HH:mm:ss"; // Example: "YYYY-MM-DD HH:MM:SS"
-    
-//     // // Format the Time object into the desired format
-//     // string formattedDateTime = time:format(utcTime, desiredFormat);
-    
-//     return utc;
-// }
 
 
  public isolated function filterAppr(int userId,string vehMake,string model, int year, int pageNumber, int pageSize) returns Appraisal[]|error {
@@ -159,5 +143,4 @@ public isolated function getApprList(int user_id, int pageNumber, int pageSize) 
     check resultStream.close();
     return apprs;
 }
-
 

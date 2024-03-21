@@ -3,10 +3,11 @@ import big_billion_cars.dbconnection;
 import big_billion_cars.model;
 
 public isolated function vehicleBuy(int appr_id,int buyerUser_id) returns string|error {
+    time:Utc currTime = time:utcNow();
     boolean soldStatus=true;
     sql:ExecutionResult _ = check dbconnection:dbClient->execute(
         `UPDATE big_billion_cars."Appraisal"
-	SET "soldOut"=${soldStatus}, "buyerUser_id"=${buyerUser_id} WHERE appr_id=${appr_id} AND is_active=true`);
+	SET "soldOut"=${soldStatus}, "buyerUser_id"=${buyerUser_id},"createdOn"=${currTime} WHERE appr_id=${appr_id} AND is_active=true`);
 
     return "car purchase successfully";
 }
