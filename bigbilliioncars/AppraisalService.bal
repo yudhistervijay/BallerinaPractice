@@ -51,10 +51,12 @@ service /appraisal on httpl {
     }
 
 
-
-    isolated resource function get filterAppraisal(int userId,string make,string model,int year,int pageNumber, int pageSize) returns model:Appraisal[]|error? {
-        return model:filterAppr(userId,make,model,year,pageNumber,pageSize);
+    isolated resource function get filterAppraisal(int userId,string? make,string? model,int? year,int pageNumber, int pageSize) returns model:Appraisal[]|error? {
+        return model:filterAppr(userId,make ?: "",model ?: "",year ?: 0,pageNumber,pageSize);
     }
+
+    
+
 
     
 }
