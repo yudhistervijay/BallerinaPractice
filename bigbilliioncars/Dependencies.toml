@@ -5,7 +5,7 @@
 
 [ballerina]
 dependencies-toml-version = "2"
-distribution-version = "2201.8.5"
+distribution-version = "2201.8.6"
 
 [[package]]
 org = "admin"
@@ -16,12 +16,14 @@ dependencies = [
 	{org = "ballerina", name = "http"},
 	{org = "ballerina", name = "io"},
 	{org = "ballerina", name = "sql"},
+	{org = "ballerina", name = "time"},
 	{org = "ballerinai", name = "observe"},
 	{org = "ballerinax", name = "postgresql"},
 	{org = "ballerinax", name = "postgresql.driver"}
 ]
 modules = [
 	{org = "admin", packageName = "big_billion_cars", moduleName = "big_billion_cars"},
+	{org = "admin", packageName = "big_billion_cars", moduleName = "big_billion_cars.configuration"},
 	{org = "admin", packageName = "big_billion_cars", moduleName = "big_billion_cars.dbconnection"},
 	{org = "admin", packageName = "big_billion_cars", moduleName = "big_billion_cars.favoriteVehicle"},
 	{org = "admin", packageName = "big_billion_cars", moduleName = "big_billion_cars.inventory"},
@@ -99,7 +101,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "http"
-version = "2.10.11"
+version = "2.10.12"
 dependencies = [
 	{org = "ballerina", name = "auth"},
 	{org = "ballerina", name = "cache"},
@@ -313,6 +315,9 @@ name = "time"
 version = "2.4.0"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
+]
+modules = [
+	{org = "ballerina", packageName = "time", moduleName = "time"}
 ]
 
 [[package]]
