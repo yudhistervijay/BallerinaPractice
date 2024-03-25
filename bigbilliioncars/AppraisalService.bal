@@ -7,9 +7,9 @@ listener http:Listener httpl = new(8080);
 
 
 
-@http:ServiceConfig {cors: {allowOrigins: ["http://localhost:4200"], 
+@http:ServiceConfig {cors: {allowOrigins: ["http://localhost:4200","http://10.175.1.65:4200"], 
 allowCredentials: false, 
-allowHeaders: ["Content-Type"],
+allowHeaders: ["Content-Type","userId"],
 exposeHeaders: ["*"], 
 maxAge: 84900}}
 
@@ -22,12 +22,12 @@ service /appraisal on httpl {
         return model:editAppraisal(appr_id, appraisal);
     }
 
-    isolated resource function post deleteAppraisal(int appr_id)returns string|error? {
-        return model:deleteAppraisal(appr_id);
+    isolated resource function post deleteAppraisal(int apprRef)returns string|error? {
+        return model:deleteAppraisal(apprRef);
     }
 
-    isolated resource function post downloadImage(string imageName) returns byte[]|error? {
-        return model:downloadFile(imageName);
+    isolated resource function get downloadImage(string pic1) returns byte[]|error? {
+        return model:downloadFile(pic1);
     }
 
     isolated resource function get fetchAppraisal(int appr_id) returns model:Appraisal|error? {
@@ -46,8 +46,8 @@ service /appraisal on httpl {
     }
 
 
-    isolated resource function get apprList(int user_id,int pageNumber,int pageSize) returns model:Appraisal[]|error {
-        return model:getApprList(user_id,pageNumber,pageSize);
+    isolated resource function post apprList(@http:Header int userId,int pageNo,int pageSize) returns model:Appraisal[]|error {
+        return model:getApprList(userId,pageNo,pageSize);
     }
 
 

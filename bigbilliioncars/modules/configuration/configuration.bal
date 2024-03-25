@@ -9,6 +9,15 @@ public type ConfigCode record {|
     boolean is_active?;
 |};
 
+public type DropDown record {
+    
+    ConfigCode[] vehicleExtrColor;
+    ConfigCode[] vehicleIntrColor;   
+};
+
+
+
+
 public isolated function addConfigCode(ConfigCode config) returns int|error {
     config.is_active = true;
     sql:ExecutionResult result = check dbconnection:dbClient->execute(`
@@ -23,31 +32,31 @@ public isolated function addConfigCode(ConfigCode config) returns int|error {
 } 
 
 
-public isolated function getExtrClrList() returns ConfigCode[]|error {
+public isolated function getExtrClrList() returns ConfigCode[]|error? {
     
     ConfigCode[] configs = [];
     stream<ConfigCode, error?> resultStream = dbconnection:dbClient->query(
         `SELECT * FROM big_billion_cars."ConfigCode" where "configType" = 'Exterior_Color' And is_active=true;`
     );
-    check from ConfigCode config in resultStream
+     check from ConfigCode config in resultStream
         do {
             configs.push(config);
         };
-    check resultStream.close();
+     check resultStream.close();
     return configs;
 }
 
 
-public isolated function getIntrClrList() returns ConfigCode[]|error {
+public isolated function getIntrClrList() returns ConfigCode[]|error? {
     
     ConfigCode[] configs = [];
     stream<ConfigCode, error?> resultStream = dbconnection:dbClient->query(
         `SELECT * FROM big_billion_cars."ConfigCode" where "configType" = 'Interior_Color' And is_active=true;`
     );
-    check from ConfigCode config in resultStream
+     check from ConfigCode config in resultStream
         do {
             configs.push(config);
         };
-    check resultStream.close();
+     check resultStream.close();
     return configs;
 }

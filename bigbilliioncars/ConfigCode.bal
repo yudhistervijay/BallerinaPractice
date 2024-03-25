@@ -19,12 +19,13 @@ service /configs on httpl {
         return configuration:addConfigCode(config);
     }
 
-     isolated resource function post extClrList()returns configuration:ConfigCode[]|error? {
-        return configuration:getExtrClrList();
-    }
+     isolated resource function post dropDowns()returns configuration:DropDown|error {
+        configuration:ConfigCode[]|error? extrClrList = configuration:getExtrClrList();
+         configuration:ConfigCode[]|error? intrClrList = configuration:getIntrClrList();
+         configuration:DropDown  drop = {vehicleIntrColor : check intrClrList ?: [],vehicleExtrColor: check extrClrList ?: []};
+         return drop;
+     }
 
-     isolated resource function post intrClrList()returns configuration:ConfigCode[]|error? {
-        return configuration:getIntrClrList();
-    }
+    
 
 }

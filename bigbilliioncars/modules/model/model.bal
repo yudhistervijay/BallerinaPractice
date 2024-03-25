@@ -11,37 +11,37 @@ import ballerina/time;
 
 
 public type Appraisal record {|
-    int appr_id?;
-    string vin;
-    int vehYear;
-    string vehMake;
-    string vehModel;
-    string vehSeries;
+    int id?;
+    string vinNumber;
+    int vehicleYear;
+    string vehicleMake;
+    string vehicleModel;
+    string vehicleSeries;
     string interiorColor;
     string exteriorColor;
     int user_id?;
     boolean is_active?;
-    string img1;
-    string img2?;
-    string img3?;
-    string img4?;
+    string vehiclePic1;
+    string vehiclePic2?;
+    string vehiclePic3?;
+    string vehiclePic4?;
     string invntrySts?;
     boolean soldOut?;
     int buyerUser_id?;
-    float carPrice;
+    float appraisedValue;
     string createdBy?;
     time:Utc createdOn?;
     string engineType;
-    int vehMiles;
-    string transmission;
+    int vehicleMileage;
+    string transmissionType;
 
 |};
 
 
 type ApprFilter record {|
-    string vehMake;
-    string vehModel;
-    int vehYear;
+    string vehicleMake;
+    string vehicleModel;
+    int vehicleYear;
 |};
 
 
@@ -56,45 +56,45 @@ public function addAppraisal(int userId,Appraisal appraisal) returns int|error {
     user:Users users = check user:getUsers(userId);
     appraisal.createdBy = users.username;
     sql:ExecutionResult result = check dbconnection:dbClient->execute(`
-        INSERT INTO big_billion_cars."Appraisal" (vin,"vehYear","vehMake", "vehModel","vehSeries","interiorColor","exteriorColor",user_id, is_active,"img1","img2","img3","img4","invntrySts","soldOut","carPrice","createdBy","createdOn","engineType","vehMiles","transmission")
-        VALUES (${appraisal.vin}, ${appraisal.vehYear},${appraisal.vehMake},${appraisal.vehModel},  
-                ${appraisal.vehSeries}, ${appraisal.interiorColor},
+        INSERT INTO big_billion_cars."Appraisal" (vinNumber,"vehicleYear","vehicleMake", "vehicleModel","vehicleSeries","interiorColor","exteriorColor",user_id, is_active,"vehiclePic1","vehiclePic2","vehiclePic3","vehiclePic4","invntrySts","soldOut","appraisedValue","createdBy","createdOn","engineType","vehicleMileage","transmissionType")
+        VALUES (${appraisal.vinNumber}, ${appraisal.vehicleYear},${appraisal.vehicleMake},${appraisal.vehicleModel},  
+                ${appraisal.vehicleSeries}, ${appraisal.interiorColor},
                 ${appraisal.exteriorColor},${userId}, 
-                ${appraisal.is_active},${appraisal.img1},${appraisal.img2},${appraisal.img3},${appraisal.img4},
-                ${appraisal.invntrySts},${appraisal.soldOut},${appraisal.carPrice},${appraisal.createdBy},${currTime},${appraisal.engineType},${appraisal.vehMiles},${appraisal.transmission})`);
+                ${appraisal.is_active},${appraisal.vehiclePic1},${appraisal.vehiclePic2},${appraisal.vehiclePic3},${appraisal.vehiclePic4},
+                ${appraisal.invntrySts},${appraisal.soldOut},${appraisal.appraisedValue},${appraisal.createdBy},${currTime},${appraisal.engineType},${appraisal.vehicleMileage},${appraisal.transmissionType})`);
     int|string? lastInsertId = result.lastInsertId;
     if lastInsertId is int {
-        error? mailService = mailcon:mailService(userId,appraisal.vin);
+        error? mailService = mailcon:mailService(userId,appraisal.vinNumber);
         return lastInsertId;
     } else {
         return error("Unable to add the appraisal");
     }
 }
 
-public isolated function editAppraisal(int appr_id, Appraisal appraisal) returns string|error {
+public isolated function editAppraisal(int id, Appraisal appraisal) returns string|error {
     time:Utc currTime = time:utcNow();
     appraisal.is_active = true;
     sql:ExecutionResult _ = check dbconnection:dbClient->execute(`
         UPDATE big_billion_cars."Appraisal"
-	SET vin=${appraisal.vin}, "vehYear"=${appraisal.vehYear}, "vehModel"=${appraisal.vehModel}, 
-    "vehSeries"=${appraisal.vehSeries}, "vehMake"=${appraisal.vehMake}, 
+	SET vinNumber=${appraisal.vinNumber}, "vehicleYear"=${appraisal.vehicleYear}, "vehicleModel"=${appraisal.vehicleModel}, 
+    "vehSeries"=${appraisal.vehicleSeries}, "vehicleMake"=${appraisal.vehicleMake}, 
     "interiorColor"=${appraisal.interiorColor}, "exteriorColor"=${appraisal.exteriorColor}, 
-    img1=${appraisal.img1},img2=${appraisal.img2},img3=${appraisal.img3},img4=${appraisal.img4},
-    "carPrice"=${appraisal.carPrice},"createdOn"=${currTime},"engineType"=${appraisal.engineType},"vehMiles"=${appraisal.vehMiles},"transmission"=${appraisal.transmission} WHERE appr_id=${appr_id} AND is_active=true`);
+    vehiclePic1=${appraisal.vehiclePic1},vehiclePic2=${appraisal.vehiclePic2},vehiclePic3=${appraisal.vehiclePic3},vehiclePic4=${appraisal.vehiclePic4},
+    "appraisedValue"=${appraisal.appraisedValue},"createdOn"=${currTime},"engineType"=${appraisal.engineType},"vehicleMileage"=${appraisal.vehicleMileage},"transmissionType"=${appraisal.transmissionType} WHERE id=${id} AND is_active=true`);
 
     return "updated successfully";
 }
 
 public isolated function deleteAppraisal(int id) returns string|error? {
     sql:ExecutionResult _ = check dbconnection:dbClient->execute(
-        `UPDATE big_billion_cars."Appraisal" SET is_active = false WHERE appr_id= ${id}`
+        `UPDATE big_billion_cars."Appraisal" SET is_active = false WHERE id= ${id}`
     );
     return "appraisal car deleted successfully";
 }
 
-public isolated function showAppraisal(int appr_id) returns Appraisal|error {
+public isolated function showAppraisal(int id) returns Appraisal|error {
     Appraisal appr = check dbconnection:dbClient->queryRow(
-        `SELECT * FROM big_billion_cars."Appraisal" WHERE appr_id = ${appr_id} AND is_active=true`
+        `SELECT * FROM big_billion_cars."Appraisal" WHERE id = ${id} AND is_active=true`
     );
     return appr;
 }
