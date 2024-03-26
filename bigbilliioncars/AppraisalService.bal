@@ -1,11 +1,16 @@
+import big_billion_cars.model;
+
 import ballerina/http;
 import ballerina/io;
-import big_billion_cars.model ;
 import big_billion_cars.inventory;
 import big_billion_cars.favoriteVehicle;
 import ballerina/uuid;
 
-listener http:Listener httpl = new(8080);
+
+
+
+
+listener http:Listener httpl = new (8080);
 
 
 
@@ -30,11 +35,13 @@ service /appraisal on httpl {
 
     isolated resource function get downloadImage(string pic1) returns byte[]|error? {
         return model:downloadFile(pic1);
+
     }
 
     // isolated resource function post showToUi(@http:Header int AppraisalId) returns model:Appraisal|error? {
     //     return model:showAppraisal(AppraisalId);
     // }
+
 
 
      isolated resource function post showToUi(@http:Header int AppraisalId) returns model:showToUIRes|error? {
@@ -44,17 +51,20 @@ service /appraisal on httpl {
     }
 
 
+
     resource function post uploadImage(http:Request request) returns model:Response|error {
        string uuid4 = uuid:createType4AsString();
         stream<byte[], io:Error?> streamer = check request.getByteStream();
  
         // Writes the incoming stream to a file using the `io:fileWriteBlocksFromStream` API
         // by providing the file location to which the content should be written.
+
         check io:fileWriteBlocksFromStream("D:/ballerina practice/ballerina images/"+uuid4+".jpg", streamer);
         check streamer.close();
         model:Response resp = {message:uuid4+".jpg", code:200, status:true};
          return resp;
     }
+
 
 
     isolated resource function post apprList(@http:Header string userId,int pageNo,int pageSize) returns model:ApprCardsRes|error {
@@ -63,7 +73,7 @@ service /appraisal on httpl {
          int pages = model:getPages(check totlRcd ?: 0);
          model:ApprCardsRes  apprCards = {cards : check apprList, code : 200, message : "Appraisal cards success", status :true,totalRecords:check totlRcd ?: 0,totalPages:pages};
          return apprCards;
-         
+  
     }
 
 

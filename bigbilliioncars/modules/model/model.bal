@@ -36,11 +36,18 @@ public type Appraisal record {|
     float appraisedValue;
     string createdBy?;
     time:Utc createdOn?;
-    string engineType;
+        string engineType;
     int vehicleMileage;
     string transmissionType;
 
 |};
+
+
+
+Appraisal[] apprs = [];
+
+
+
 
 
 // type ApprFilter record {|
@@ -104,10 +111,11 @@ public type AppraisalDto record {
 };
 
 
-// time:Time time1 = time:parse("2017-06-26T09:46:22.444-0500", "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+
 
 
 public function addAppraisal(string userId,Appraisal appraisal) returns Response|error {
+
     time:Utc currTime = time:utcNow();
     appraisal.is_active = true;
     appraisal.invntrySts = "created";
@@ -181,9 +189,10 @@ public isolated function showAppraisal(int id) returns Appraisal|error {
     return appr;
 }
 
+
 public isolated function downloadFile(string imageName) returns byte[]|error? {
 
-    string imagePath = "D:/ballerina practice/ballerina images/" + imageName;
+    string imagePath = "D:/ballerina/BallerinaPractice/bigbilliioncars/files/" + imageName;
     byte[] bytes = check io:fileReadBytes(imagePath);
     return bytes;
 }
