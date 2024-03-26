@@ -6,7 +6,7 @@ import ballerina/http;
 
 @http:ServiceConfig {
     cors: {
-        allowOrigins: ["http://localhost:4200","http://10.175.1.59:4200"],
+        allowOrigins: ["http://localhost:4200","http://10.175.1.71:4200"],
         allowCredentials: false,
         allowHeaders: ["Content-Type","userId","id"],
         exposeHeaders: ["*"],
@@ -25,11 +25,11 @@ service /inventory on httpl {
          return invntryCards;
         }
 
-        isolated resource function post getSearchFactory(@http:Header string id,int pageNumber,int pageSize) returns inventory:invntryCards|error {
-        model:Appraisal[]|error srchFtryList =  searchFactory:getSearchFacList(id, pageNumber,pageSize);
+        isolated resource function post getSearchFactory(@http:Header string id,int pageNumber,int pageSize) returns inventory:srchFtryCards|error {
+         model:AppraisalDto[]|error searchFacList = searchFactory:getSearchFacList(id, pageNumber,pageSize);
         int|error? totlRcd = model:getRecordsSrchFtry("inventory",false,id);
         int pages = model:getPages(check totlRcd ?: 0);
-        inventory:invntryCards  srcgFtryCards = {cards : check srchFtryList, code : 200,message:"serach Factory success", status:true,totalRecords:check totlRcd ?: 0,totalPages:pages};
+        inventory:srchFtryCards  srcgFtryCards = {cards : check searchFacList, code : 200,message:"serach Factory success", status:true,totalRecords:check totlRcd ?: 0,totalPages:pages};
         return srcgFtryCards;
     }
 

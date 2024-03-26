@@ -15,6 +15,15 @@ public type invntryCards record {
     int totalPages;
 };
 
+public type srchFtryCards record {
+    model:AppraisalDto[] cards;
+    int code;
+    string message;
+    boolean status;
+    int totalRecords;
+    int totalPages;
+};
+
 
 public isolated function moveToInv(int appr_id) returns model:Response|error {
     time:Utc currTime = time:utcNow();
@@ -29,13 +38,7 @@ public isolated function moveToInv(int appr_id) returns model:Response|error {
 }
 
 public isolated function getInvList(string user_id,int pageNumber,int pageSize) returns model:Appraisal[]|error {
-    int pageNum;
-    if(pageNumber<=0){
-        pageNum=1;
-    }else{
-        pageNum=pageNumber;
-    }
-    int offset = (pageNum - 1) * pageSize; 
+   int offset = pageNumber * pageSize;
     model:Appraisal[] apprs = [];
     string invSts = "inventory";
     stream<model:Appraisal, error?> resultStream = dbconnection:dbClient->query(

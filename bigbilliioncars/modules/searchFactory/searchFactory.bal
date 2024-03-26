@@ -8,27 +8,21 @@ public isolated function vehicleBuy(int appr_id,string buyerUser_id) returns str
     boolean soldStatus=true;
     sql:ExecutionResult _ = check dbconnection:dbClient->execute(
         `UPDATE big_billion_cars."Appraisal"
-	SET "soldOut"=${soldStatus}, "buyerUser_id"=${buyerUser_id},"createdOn"=${currTime} WHERE appr_id=${appr_id} AND is_active=true`);
+	SET "soldOut"=${soldStatus}, "buyerUser_id"=${buyerUser_id},"createdOn"=${currTime} WHERE id=${appr_id} AND is_active=true`);
 
     return "car purchase successfully";
 }
 
-public isolated function getSearchFacList(string user_id,int pageNumber,int pageSize) returns model:Appraisal[]|error {
-     int pageNum;
-    if(pageNumber<=0){
-        pageNum=1;
-    }else{
-        pageNum=pageNumber;
-    }
-    int offset = (pageNum - 1) * pageSize; 
+public isolated function getSearchFacList(string user_id,int pageNumber,int pageSize) returns model:AppraisalDto[]|error {
+    int offset = pageNumber * pageSize;
     
-    model:Appraisal[] apprs = [];
+    model:AppraisalDto[] apprs = [];
     string invSts = "inventory";
-    stream<model:Appraisal, error?> resultStream = dbconnection:dbClient->query(
-        `SELECT * FROM big_billion_cars."Appraisal" WHERE "user_id" <> ${user_id} AND "invntrySts"=${invSts}
-        AND "soldOut" =false AND is_active=true ORDER BY "createdOn" DESC LIMIT ${pageSize} OFFSET ${offset}`
+    stream<model:AppraisalDto, error?> resultStream = dbconnection:dbClient->query(
+        `SELECT a.*, COALESCE(fv."isVehicleFav", false) AS isVehicleFav FROM big_billion_cars."Appraisal" a left JOIN big_billion_cars."FavVeh" fv ON a.id = fv.appr_id WHERE a."user_id" <> ${user_id} AND a."invntrySts"=${invSts}
+        AND a."soldOut" =false AND a.is_active=true ORDER BY a."createdOn" DESC LIMIT ${pageSize} OFFSET ${offset}`
     );
-    check from model:Appraisal appr in resultStream
+    check from model:AppraisalDto appr in resultStream
         do {
             apprs.push(appr);
         };
@@ -37,13 +31,7 @@ public isolated function getSearchFacList(string user_id,int pageNumber,int page
 }
 
 public isolated function getMyPurList(string user_id,int pageNumber,int pageSize) returns model:Appraisal[]|error {
-     int pageNum;
-    if(pageNumber<=0){
-        pageNum=1;
-    }else{
-        pageNum=pageNumber;
-    }
-    int offset = (pageNum - 1) * pageSize; 
+    int offset = pageNumber * pageSize;
     model:Appraisal[] apprs = [];
     string invSts = "inventory";
     stream<model:Appraisal, error?> resultStream = dbconnection:dbClient->query(
@@ -59,13 +47,7 @@ public isolated function getMyPurList(string user_id,int pageNumber,int pageSize
 }
 
 public isolated function getMySalesList(string user_id,int pageNumber,int pageSize) returns model:Appraisal[]|error {
-    int pageNum;
-    if(pageNumber<=0){
-        pageNum=1;
-    }else{
-        pageNum=pageNumber;
-    }
-    int offset = (pageNum - 1) * pageSize; 
+    int offset = pageNumber * pageSize;
     model:Appraisal[] apprs = [];
     string invSts = "inventory";
     stream<model:Appraisal, error?> resultStream = dbconnection:dbClient->query(

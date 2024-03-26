@@ -8,6 +8,7 @@ import ballerina/sql;
 import ballerinax/postgresql.driver as _;
 import ballerina/time;
 // import ballerina/persist;
+// import ballerina/math;
 
 
 
@@ -61,6 +62,45 @@ public type showToUIRes record {
     string message;
     int code;
     boolean status; 
+};
+
+public type ApprCardsRes record {
+    Appraisal[] cards;
+    int code;
+    string message;
+    boolean status;
+    int totalRecords;
+    int totalPages;
+};
+
+public type AppraisalDto record {
+    int id?;
+    string clientFirstName?;
+    string clientLastName?;
+    string clientPhNum?;
+    string vinNumber;
+    int vehicleYear;
+    string vehicleMake;
+    string vehicleModel;
+    string vehicleSeries;
+    int vehicleInterior?;
+    int vehicleExtColor?;
+    string user_id?;
+    boolean is_active?;
+    string? vehiclePic1;
+    string? vehiclePic2;
+    string? vehiclePic3;
+    string? vehiclePic4;
+    string invntrySts?;
+    boolean soldOut?;
+    string buyerUser_id?;
+    float appraisedValue;
+    string createdBy?;
+    time:Utc createdOn?;
+    string engineType;
+    int vehicleMileage;
+    string transmissionType;
+    boolean isVehicleFav;
 };
 
 
@@ -149,13 +189,7 @@ public isolated function downloadFile(string imageName) returns byte[]|error? {
 }
 
 public isolated function getApprList(string user_id, int pageNumber, int pageSize) returns Appraisal[]|error {
-    int pageNum;
-    if (pageNumber <= 0) {
-        pageNum = 1;
-    } else {
-        pageNum = pageNumber;
-    }
-    int offset = (pageNum - 1) * pageSize; // Calculate the offset
+    int offset = pageNumber * pageSize;
     Appraisal[] apprs = [];
     stream<Appraisal, error?> resultStream = dbconnection:dbClient->query(
         `SELECT * FROM big_billion_cars."Appraisal" WHERE "user_id" = ${user_id} and "invntrySts"='created' AND is_active=true 
@@ -172,15 +206,9 @@ public isolated function getApprList(string user_id, int pageNumber, int pageSiz
 
 
  public isolated function filterAppr(string userId,string vehMake,string model, int year, int pageNumber, int pageSize) returns Appraisal[]|error {
-    int pageNum;
-    if (pageNumber <= 0) {
-        pageNum = 1;
-    } else {
-        pageNum = pageNumber;
-    }
+    int offset = pageNumber * pageSize;
     string make = "%"+vehMake+"%";
-    string carModel = "%"+model+"%";
-    int offset = (pageNum - 1) * pageSize; // Calculate the offset
+    string carModel = "%"+model+"%";    
     Appraisal[] apprs = [];
     stream<Appraisal, error?> resultStream = dbconnection:dbClient->query(
         `SELECT * FROM big_billion_cars."Appraisal" WHERE "user_id" = ${userId} AND "invntrySts"='created'
@@ -199,6 +227,21 @@ public isolated function getApprList(string user_id, int pageNumber, int pageSiz
 public isolated function getTotalRecords(string invSts, boolean soldOut, string userId)returns int|error?{
     int totalRec = check dbconnection:dbClient->queryRow(
         `SELECT COUNT(*) FROM big_billion_cars."Appraisal" where "invntrySts"= ${invSts} and "soldOut" = ${soldOut} and "user_id"=${userId} and is_active = true`
+    );
+    return totalRec;
+}
+
+public isolated function getRecordsForPurchase(string invSts, boolean soldOut, string userId)returns int|error?{
+    int totalRec = check dbconnection:dbClient->queryRow(
+        `SELECT COUNT(*) FROM big_billion_cars."Appraisal" where "invntrySts"= ${invSts} and "soldOut" = ${soldOut} and "buyerUser_id"=${userId} and is_active = true`
+    );
+    return totalRec;
+}
+
+
+public isolated function getRecordsForSold(string invSts, boolean soldOut, string userId)returns int|error?{
+    int totalRec = check dbconnection:dbClient->queryRow(
+        `SELECT COUNT(*) FROM big_billion_cars."Appraisal" where "invntrySts"= ${invSts} and "soldOut" = ${soldOut} and "buyerUser_id" <> ${userId} and "user_id"= ${userId} and is_active = true`
     );
     return totalRec;
 }
@@ -231,3 +274,6 @@ public isolated function getPages(int totalRecords) returns int{
 //     }
 
 // }
+
+
+
