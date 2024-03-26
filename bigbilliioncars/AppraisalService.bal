@@ -2,41 +2,48 @@ import big_billion_cars.model;
 
 import ballerina/http;
 import ballerina/io;
+import big_billion_cars.inventory;
 import ballerina/uuid;
+
 
 listener http:Listener httpl = new (8080);
 
 
 
-@http:ServiceConfig {
-    cors: {
-        allowOrigins: ["http://localhost:4200"],
-        allowCredentials: false,
-        allowHeaders: ["Content-Type"],
-        exposeHeaders: ["*"],
-        maxAge: 84900
-    }
-}
+@http:ServiceConfig {cors: {allowOrigins: ["http://localhost:4200","http://10.175.1.59:4200"], 
+allowCredentials: false, 
+allowHeaders: ["Content-Type","userId","AppraisalId","id"],
+exposeHeaders: ["*"], 
+maxAge: 84900}}
 
 service /appraisal on httpl {
-    resource function post addAppraisal(string user_id, model:Appraisal appraisal) returns int|error? {
-        return model:addAppraisal(user_id, appraisal);
+    resource function post addAppraiseVehicle(@http:Header string userId,model:Appraisal appraisal)returns model:Response|error? {
+        return model:addAppraisal(userId,appraisal);
     }
 
-    isolated resource function post editAppraisal(int appr_id, model:Appraisal appraisal) returns string|error {
-        return model:editAppraisal(appr_id, appraisal);
+    isolated resource function post updateAppraiseVehicle(@http:Header int id,model:Appraisal appraisal)returns model:Response|error {
+        return model:editAppraisal(id, appraisal);
     }
 
-    isolated resource function post deleteAppraisal(int appr_id) returns string|error? {
-        return model:deleteAppraisal(appr_id);
+    isolated resource function post deleteAppraisal(int apprRef)returns model:Response|error? {
+        return model:deleteAppraisal(apprRef);
     }
 
-    isolated resource function get downloadImage(string imageName) returns byte[]|error? {
-        return model:downloadFile(imageName);
+    isolated resource function get downloadImage(string pic1) returns byte[]|error? {
+        return model:downloadFile(pic1);
+
     }
 
-    isolated resource function get fetchAppraisal(int appr_id) returns model:Appraisal|error? {
-        return model:showAppraisal(appr_id);
+    // isolated resource function post showToUi(@http:Header int AppraisalId) returns model:Appraisal|error? {
+    //     return model:showAppraisal(AppraisalId);
+    // }
+
+
+
+     isolated resource function post showToUi(@http:Header int AppraisalId) returns model:showToUIRes|error? {
+         model:Appraisal|error showAppraisal = model:showAppraisal(AppraisalId);
+         model:showToUIRes  showToUicrd = {apr : check showAppraisal,message : "showToUi working" ,code : 200, status: true};
+         return showToUicrd;
     }
 
     resource function post uploadImage(http:Request request) returns string|error {
@@ -46,14 +53,30 @@ service /appraisal on httpl {
 
         // Writes the incoming stream to a file using the `io:fileWriteBlocksFromStream` API
         // by providing the file location to which the content should be written.
+
         check io:fileWriteBlocksFromStream("./files/" + uuid4 + ".jpg", streamer);
+
         check streamer.close();
         return "File Received!";
     }
 
-    isolated resource function get apprList(int user_id, int pageNumber, int pageSize) returns model:Appraisal[]|error {
-        return model:getApprList(user_id, pageNumber, pageSize);
+
+    isolated resource function post apprList(@http:Header string userId,int pageNo,int pageSize) returns model:Appraisal[]|error {
+        return model:getApprList(userId,pageNo,pageSize);
+
     }
 
+
+    isolated resource function get filterAppraisal(string userId,string? make,string? model,int? year,int pageNumber, int pageSize) returns model:Appraisal[]|error? {
+        return model:filterAppr(userId,make ?: "",model ?: "",year ?: 0,pageNumber,pageSize);
+    }
+
+    
+
+    isolated resource function post moveToInventory(int apprRef) returns model:Response|error {
+            return inventory:moveToInv(apprRef);
+    }
+
+    
 }
 

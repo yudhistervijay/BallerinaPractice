@@ -18,8 +18,10 @@ public type Users record {|
 
 public isolated function getUsers(string id) returns Users|error {
 
+
     Users users = check dbconnection:dbClient->queryRow(
         `SELECT * FROM big_billion_cars.users WHERE user_id = ${id} AND is_active=true`
+
     );
     users.status="true";
     return users;
