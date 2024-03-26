@@ -30,15 +30,14 @@ public type Appraisal record {|
     float carPrice;
     string createdBy?;
     time:Utc createdOn?;
-
 |};
+
+
 
 Appraisal[] apprs = [];
 
-// time:Time time1 = time:parse("2017-06-26T09:46:22.444-0500", "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-
-public function addAppraisal(int userId,Appraisal appraisal) returns int|error {
+public function addAppraisal(string userId,Appraisal appraisal) returns int|error {
     time:Utc currTime = time:utcNow();
     appraisal.is_active = true;
     appraisal.invntrySts = "created";
@@ -89,9 +88,10 @@ public isolated function showAppraisal(int appr_id) returns Appraisal|error {
     return appr;
 }
 
+
 public isolated function downloadFile(string imageName) returns byte[]|error? {
 
-    string imagePath = "D:/ballerina practice/ballerina images/" + imageName;
+    string imagePath = "D:/ballerina/BallerinaPractice/bigbilliioncars/files/" + imageName;
     byte[] bytes = check io:fileReadBytes(imagePath);
     return bytes;
 }

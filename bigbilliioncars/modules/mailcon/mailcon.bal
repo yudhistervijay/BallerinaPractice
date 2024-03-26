@@ -6,7 +6,7 @@ email:SmtpConfiguration smtpConfig = {
 };
 
 
-public function mailService(int userId,string vin) returns error?{
+public function mailService(string userId,string vin) returns error?{
 email:SmtpClient smtpClient = check new ("smtp.gmail.com", "yudhistervijay@gmail.com", "aarxzdxvixtaidzo", smtpConfig);
 user:Users users = check user:getUsers(userId);
 string gmail=users.email;
