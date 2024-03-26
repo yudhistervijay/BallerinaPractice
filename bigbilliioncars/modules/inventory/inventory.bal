@@ -5,17 +5,30 @@ import big_billion_cars.model;
 import ballerina/time;
 
 
-public isolated function moveToInv(int appr_id) returns string|error {
+
+public type invntryCards record {
+    model:Appraisal[] cards;
+    int code;
+    string message;
+    boolean status;
+    int totalRecords;
+    int totalPages;
+};
+
+
+public isolated function moveToInv(int appr_id) returns model:Response|error {
     time:Utc currTime = time:utcNow();
     string invSts = "inventory";
     sql:ExecutionResult _ = check dbconnection:dbClient->execute(
         `UPDATE big_billion_cars."Appraisal"
-	SET "invntrySts"=${invSts},"createdOn"=${currTime} WHERE appr_id=${appr_id} AND "is_active"=true`);
+	SET "invntrySts"=${invSts},"createdOn"=${currTime} WHERE id=${appr_id} AND "is_active"=true`);
 
-    return "Moved to inventory";
+    string invMsg="moved to inventory successfully";
+    model:Response  response = {message : invMsg, code: 200, status : true};
+    return response;
 }
 
-public isolated function getInvList(int user_id,int pageNumber,int pageSize) returns model:Appraisal[]|error {
+public isolated function getInvList(string user_id,int pageNumber,int pageSize) returns model:Appraisal[]|error {
     int pageNum;
     if(pageNumber<=0){
         pageNum=1;
@@ -36,3 +49,5 @@ public isolated function getInvList(int user_id,int pageNumber,int pageSize) ret
     check resultStream.close();
     return apprs;
 }
+
+

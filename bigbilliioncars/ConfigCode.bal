@@ -5,15 +5,15 @@ import big_billion_cars.configuration;
 
 @http:ServiceConfig {
     cors: {
-        allowOrigins: ["http://localhost:4200"],
+        allowOrigins: ["http://localhost:4200","http://10.175.1.59:4200"],
         allowCredentials: false,
-        allowHeaders: ["Content-Type"],
+        allowHeaders: ["Content-Type","userId"],
         exposeHeaders: ["*"],
         maxAge: 84900
     }
 }
 
-service /configs on httpl {
+service /configcodes on httpl {
 
     isolated resource function post addConfig(configuration:ConfigCode config)returns int|error? {
         return configuration:addConfigCode(config);
@@ -25,7 +25,5 @@ service /configs on httpl {
          configuration:DropDown  drop = {vehicleIntrColor : check intrClrList ?: [],vehicleExtrColor: check extrClrList ?: []};
          return drop;
      }
-
-    
 
 }

@@ -3,7 +3,7 @@ import ballerina/sql;
 import big_billion_cars.dbconnection;
 
 public type Users record {|
-    int user_id?;
+    string user_id?;
     string first_name;
     string last_name;
     string email;
@@ -19,25 +19,20 @@ public type Users record {|
 // configurable int PORT = ?;
 // configurable string DATABASE = ?;
 
-public  isolated function getUsers(int id) returns Users|error {
+public  isolated function getUsers(string id) returns Users|error {
     Users users = check dbconnection:dbClient->queryRow(
-        `SELECT * FROM big_billion_cars.users WHERE user_id = ${id}`
+        `SELECT * FROM big_billion_cars.users WHERE "user_id" = ${id}`
     );
     return users;
 }
 
-public isolated function addUser(Users user) returns int|error {
+public isolated function addUser(Users user) returns string|error {
     user.is_active = true;
-    sql:ExecutionResult result = check dbconnection:dbClient->execute(`
+    sql:ExecutionResult _ = check dbconnection:dbClient->execute(`
         INSERT INTO big_billion_cars.users (first_name, last_name,username,password, email, phone, is_active)
         VALUES (${user.first_name}, ${user.last_name},${user.username},${user.password},  
                 ${user.email}, ${user.phone} , ${user.is_active})`);
-    int|string? lastInsertId = result.lastInsertId;
-    if lastInsertId is int {        
-        return lastInsertId;
-    } else {
-        return error("Unable to obtain last insert ID");
-    }
+    return "user added success";
 } 
 
 public isolated function findUser(string username, string password) returns string|Users|error{            
