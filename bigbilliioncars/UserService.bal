@@ -3,6 +3,7 @@ import big_billion_cars.user;
 import ballerina/uuid;
 import ballerina/io;
 import big_billion_cars.model;
+import big_billion_cars.dbconnection;
 
 
 
@@ -51,10 +52,11 @@ service /user on httpl{
 
         string uuid4 = uuid:createType4AsString();
         stream<byte[], io:Error?> streamer = check request.getByteStream();
+        string imageFolder=dbconnection:imageFolder;
 
         // Writes the incoming stream to a file using the `io:fileWriteBlocksFromStream` API
         // by providing the file location to which the content should be written.
-        check io:fileWriteBlocksFromStream("./files/" + uuid4 + ".jpg", streamer);
+        check io:fileWriteBlocksFromStream(imageFolder+ uuid4 + ".jpg", streamer);
         check streamer.close();
         fileName res = {fileName: uuid4+".jpg",code:200,status:true};
         // model:Response resp = {message:uuid4+".jpg", code:200, status:true};

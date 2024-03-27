@@ -50,11 +50,11 @@ Appraisal[] apprs = [];
 
 
 
-// type ApprFilter record {|
+// type ApprFilter record {
 //     string vehicleMake;
 //     string vehicleModel;
 //     int vehicleYear;
-// |};
+// };
 
 public type Response record {
     string message;
@@ -191,8 +191,8 @@ public isolated function showAppraisal(int id) returns Appraisal|error {
 
 
 public isolated function downloadFile(string imageName) returns byte[]|error? {
-
-    string imagePath = "./files/" + imageName;
+    string imageFold = dbconnection:imageFolder;
+    string imagePath = imageFold + imageName;
     byte[] bytes = check io:fileReadBytes(imagePath);
     return bytes;
 }
@@ -295,5 +295,12 @@ public isolated function checkVinNumber(string userId,string vin) returns Respon
 
 // }
 
-
+// public isolated function vehYears(string userId) returns int[]|error{    
+//     int[] vehYears = check dbconnection:dbClient->queryRow(
+//         `select distinct  a."vehicleYear"  from big_billion_cars."Appraisal" a where "user_id" = ${userId}
+//             and a."invntrySts" = 'inventory'`
+//     );
+           
+//     return vehYears;
+// }
 

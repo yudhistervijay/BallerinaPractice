@@ -4,6 +4,7 @@ import ballerina/http;
 import ballerina/io;
 import big_billion_cars.inventory;
 import big_billion_cars.favoriteVehicle;
+import big_billion_cars.dbconnection;
 import ballerina/uuid;
 
 
@@ -38,13 +39,6 @@ service /appraisal on httpl {
 
     }
 
-   
-
-    // isolated resource function post showToUi(@http:Header int AppraisalId) returns model:Appraisal|error? {
-    //     return model:showAppraisal(AppraisalId);
-    // }
-
-
 
      isolated resource function post showToUi(@http:Header int AppraisalId) returns model:showToUIRes|error? {
          model:Appraisal|error showAppraisal = model:showAppraisal(AppraisalId);
@@ -57,11 +51,12 @@ service /appraisal on httpl {
     resource function post uploadImage(http:Request request) returns model:Response|error {
        string uuid4 = uuid:createType4AsString();
         stream<byte[], io:Error?> streamer = check request.getByteStream();
+        string imageFolder=dbconnection:imageFolder;
  
         // Writes the incoming stream to a file using the `io:fileWriteBlocksFromStream` API
         // by providing the file location to which the content should be written.
 
-        check io:fileWriteBlocksFromStream("./files/"+uuid4+".jpg", streamer);
+        check io:fileWriteBlocksFromStream(imageFolder+uuid4+".jpg", streamer);
         check streamer.close();
         model:Response resp = {message:uuid4+".jpg", code:200, status:true};
          return resp;
