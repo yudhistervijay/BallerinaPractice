@@ -39,11 +39,7 @@ public type FavCardsDto record {
 public isolated function addFavVeh( string user_id,int appr_id) returns string|error {
 
     time:Utc currTime = time:utcNow();
-    // string invSts = "inventory";
-    // model:Appraisal wish = check dbconnection:dbClient->queryRow(
-    //     `SELECT * FROM big_billion_cars."Appraisal" WHERE appr_id = ${appr_id} AND invntrySts=${invSts} AND
-    //     is_active = true`
-    // );
+    
     int wishListedCar = check dbconnection:dbClient->queryRow(
         `SELECT count(*) FROM big_billion_cars."FavVeh" WHERE appr_id = ${appr_id} AND "user_id"=${user_id}`
     );
@@ -66,7 +62,7 @@ public isolated function removeFavVeh(int appr_id, string user_id) returns strin
     sql:ExecutionResult _ = check dbconnection:dbClient->execute(`
         UPDATE big_billion_cars."FavVeh" SET "isVehicleFav"=false WHERE appr_id=${appr_id} AND "user_id"=${user_id}`);
 
-    return "vehicle has been removed to favorite";
+    return "vehicle has been removed from favorite";
 }
 
 
@@ -78,7 +74,7 @@ public isolated function getFavVehList(string user_id,int pageNumber,int pageSiz
         `SELECT a.id,a."vinNumber" ,a."vehicleModel" ,a."vehicleSeries" ,a."vehicleMake",a."vehicleYear" , a."vehiclePic1",a."vehicleMileage",fv."isVehicleFav",fv.user_id 
             FROM big_billion_cars."Appraisal" a
             JOIN big_billion_cars."FavVeh" fv ON a.id = fv.appr_id
-            WHERE fv."isVehicleFav" = true and fv.user_id = ${user_id} LIMIT ${pageSize} OFFSET ${offset}`
+            WHERE fv."isVehicleFav" = true and a.is_active = true and a."soldOut" = false and fv.user_id = ${user_id} LIMIT ${pageSize} OFFSET ${offset}`
     );
     check from FavCardsDto favVeh in resultStream
         do {

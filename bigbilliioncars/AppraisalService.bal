@@ -109,6 +109,10 @@ service /appraisal on httpl {
          return resp;
     }
 
+    isolated resource function post checkVehicleAvailable(@http:Header string userId,string vin) returns model:Response|error {
+            return model:checkVinNumber(userId,vin);
+    }
+
     
 }
 

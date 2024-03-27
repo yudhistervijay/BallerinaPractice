@@ -271,7 +271,18 @@ public isolated function getPages(int totalRecords) returns int{
     }
 }
 
-
+public isolated function checkVinNumber(string userId,string vin) returns Response|error{
+    Response resp;
+    int vinAvlb = check dbconnection:dbClient->queryRow(
+        `SELECT count(*) FROM big_billion_cars."Appraisal" WHERE "vinNumber" = ${vin} AND "user_id"=${userId}`
+    );
+    if(vinAvlb == 0){
+         resp = {message:"vinNumber is allowed", code:200, status:false};
+    }else{
+         resp = {message:"vinNumber not allowed", code:200, status:true};
+    }        
+    return resp;
+}
 
 // public isolated function apprFilterDropdown(ApprFilter apprFilter) returns ApprFilter{
 //     stream<ApprFilter, persist:Error?> apprNames = ;
