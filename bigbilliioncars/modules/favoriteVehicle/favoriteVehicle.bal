@@ -44,19 +44,19 @@ public isolated function addFavVeh( string user_id,int appr_id) returns string|e
     //     `SELECT * FROM big_billion_cars."Appraisal" WHERE appr_id = ${appr_id} AND invntrySts=${invSts} AND
     //     is_active = true`
     // );
-    // FavVeh? wishListedCar = check dbconnection:dbClient->queryRow(
-    //     `SELECT * FROM big_billion_cars."FavVeh" WHERE appr_id = ${appr_id} AND user_id=${user_id}`
-    // );
+    int wishListedCar = check dbconnection:dbClient->queryRow(
+        `SELECT count(*) FROM big_billion_cars."FavVeh" WHERE appr_id = ${appr_id} AND "user_id"=${user_id}`
+    );
 
-    // if (wishListedCar is ()) {
+    if (wishListedCar == 0) {
         boolean wishlist = true;
         sql:ExecutionResult _ = check dbconnection:dbClient->execute(`
         INSERT INTO big_billion_cars."FavVeh" (appr_id,"user_id","isVehicleFav","createdOn")
         VALUES (${appr_id}, ${user_id},${wishlist},${currTime})`);
-    // } else {
-    //     sql:ExecutionResult _ = check dbconnection:dbClient->execute(`
-    //     UPDATE big_billion_cars."FavVeh" SET isWishList=true WHERE appr_id=${appr_id} AND user_id=${user_id}`);
-    // }
+    } else {
+        sql:ExecutionResult _ = check dbconnection:dbClient->execute(`
+        UPDATE big_billion_cars."FavVeh" SET "isVehicleFav"=true WHERE appr_id=${appr_id} AND "user_id"=${user_id}`);
+    }
 
     return "vehicle has been add to favorite";
 }
@@ -78,7 +78,7 @@ public isolated function getFavVehList(string user_id,int pageNumber,int pageSiz
         `SELECT a.id,a."vinNumber" ,a."vehicleModel" ,a."vehicleSeries" ,a."vehicleMake",a."vehicleYear" , a."vehiclePic1",a."vehicleMileage",fv."isVehicleFav",fv.user_id 
             FROM big_billion_cars."Appraisal" a
             JOIN big_billion_cars."FavVeh" fv ON a.id = fv.appr_id
-            WHERE fv."isVehicleFav" = true and fv.user_id = '598d968b-a7ac-4d26-87a4-ed4659e2d472' LIMIT ${pageSize} OFFSET ${offset}`
+            WHERE fv."isVehicleFav" = true and fv.user_id = ${user_id} LIMIT ${pageSize} OFFSET ${offset}`
     );
     check from FavCardsDto favVeh in resultStream
         do {

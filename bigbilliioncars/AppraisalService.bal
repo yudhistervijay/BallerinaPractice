@@ -38,6 +38,8 @@ service /appraisal on httpl {
 
     }
 
+   
+
     // isolated resource function post showToUi(@http:Header int AppraisalId) returns model:Appraisal|error? {
     //     return model:showAppraisal(AppraisalId);
     // }
@@ -59,7 +61,7 @@ service /appraisal on httpl {
         // Writes the incoming stream to a file using the `io:fileWriteBlocksFromStream` API
         // by providing the file location to which the content should be written.
 
-        check io:fileWriteBlocksFromStream("D:/ballerina practice/ballerina images/"+uuid4+".jpg", streamer);
+        check io:fileWriteBlocksFromStream("./files/"+uuid4+".jpg", streamer);
         check streamer.close();
         model:Response resp = {message:uuid4+".jpg", code:200, status:true};
          return resp;

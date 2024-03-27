@@ -192,7 +192,7 @@ public isolated function showAppraisal(int id) returns Appraisal|error {
 
 public isolated function downloadFile(string imageName) returns byte[]|error? {
 
-    string imagePath = "D:/ballerina/BallerinaPractice/bigbilliioncars/files/" + imageName;
+    string imagePath = "./files/" + imageName;
     byte[] bytes = check io:fileReadBytes(imagePath);
     return bytes;
 }
